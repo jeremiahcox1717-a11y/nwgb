@@ -35,6 +35,9 @@ function showPanel(name) {
   for (const id of ["desk", "saved", "used"]) {
     $(`panel-${id}`).classList.toggle("hidden", id !== name);
   }
+  document.querySelectorAll("nav [data-panel]").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.panel === name);
+  });
   if (name === "saved") loadSaved();
   if (name === "used") loadUsed();
 }

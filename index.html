@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>NWGB · private desk</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23100e0c' width='64' height='64'/><text x='8' y='44' font-size='28' fill='%23d7b07a' font-family='serif'>N</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23000000' width='64' height='64'/><text x='10' y='44' font-size='28' fill='%23ffffff' font-family='serif'>N</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere-photo"></div>
+      <div class="atmosphere-sun"></div>
+      <div class="atmosphere-falls"></div>
+      <div class="atmosphere-mist"></div>
+      <div class="atmosphere-vignette"></div>
+      <div class="atmosphere-grain"></div>
+    </div>
+
     <div id="lock" class="lock">
       <div class="lock-card">
         <p class="eyebrow">Private desk</p>
@@ -25,124 +34,126 @@
       </div>
     </div>
 
-    <header class="top">
-      <div>
-        <p class="eyebrow" id="greeting">Private desk</p>
-        <h1>NWGB</h1>
-      </div>
-      <p class="promise">
-        Finds shops with no website, no Google profile, or an Instagram and nothing to book.
-        One postcode at a time. Never the same code twice.
-      </p>
-      <nav>
-        <button class="text" data-panel="desk">Desk</button>
-        <button class="text" data-panel="saved">Saved leads</button>
-        <button class="text" data-panel="used">Used codes</button>
-      </nav>
-    </header>
-
-    <main id="panel-desk" class="desk">
-      <section class="ticket">
-        <p class="stamp">Next unused</p>
-        <p class="meta" id="ticket-place">Set a filter, then take a code.</p>
-        <p class="code" id="ticket-code">—</p>
-        <p class="remain" id="ticket-remain">— left in this filter</p>
-        <div class="filters">
-          <label>
-            Country
-            <select id="country">
-              <option value="GB">United Kingdom</option>
-              <option value="US">United States</option>
-            </select>
-          </label>
-          <label id="nation-wrap">
-            Nation
-            <select id="nation">
-              <option value="England">England</option>
-              <option value="Scotland">Scotland</option>
-              <option value="Wales">Wales</option>
-              <option value="Northern Ireland">Northern Ireland</option>
-              <option value="all">All UK</option>
-            </select>
-          </label>
-          <label id="town-wrap">
-            Town
-            <input id="town" list="towns" placeholder="optional, e.g. Manchester" />
-            <datalist id="towns"></datalist>
-          </label>
-          <label id="area-wrap">
-            Area letters
-            <input id="area" placeholder="optional, e.g. M or SW" maxlength="4" />
-          </label>
-          <label id="metro-wrap" class="hidden">
-            Metro
-            <select id="metro"></select>
-          </label>
+    <div class="shell">
+      <header class="top">
+        <div>
+          <p class="eyebrow" id="greeting">Private desk</p>
+          <h1>NWGB</h1>
         </div>
-        <div class="row">
-          <button id="give" class="primary">Give me the next postcode</button>
-          <button id="hunt-ticket" class="ghost">Hunt this one</button>
-        </div>
-        <div class="row slim">
-          <button id="undo" class="text">Undo last given</button>
-        </div>
-        <p class="hint">
-          Once a code is given, it is burnt. Use it, then take the next. Undo only if you hit the button by accident.
+        <p class="promise">
+          Finds shops with no website, no Google profile, or an Instagram and nothing to book.
+          One postcode at a time. Never the same code twice.
         </p>
-      </section>
+        <nav>
+          <button class="text is-active" data-panel="desk">Desk</button>
+          <button class="text" data-panel="saved">Saved leads</button>
+          <button class="text" data-panel="used">Used codes</button>
+        </nav>
+      </header>
 
-      <section class="hunt">
-        <p class="stamp">Hunt</p>
-        <form id="hunt-form">
-          <label>
-            Postcode
-            <input id="hunt-postcode" required placeholder="M1 or M1 1AE or 90210" autocomplete="off" />
-          </label>
-          <label>
-            Niche
-            <select id="niche">
-              <option value="all">Anything local</option>
-              <option value="beauty">Hair / beauty</option>
-              <option value="trades">Trades</option>
-              <option value="food">Food</option>
-              <option value="auto">Auto</option>
-              <option value="health">Health</option>
-              <option value="fitness">Fitness</option>
-              <option value="home">Home / florists / laundry</option>
-            </select>
-          </label>
-          <fieldset>
-            <legend>What to keep</legend>
-            <label class="check"><input type="checkbox" name="mode" value="noWebsite" checked /> No website</label>
-            <label class="check"><input type="checkbox" name="mode" value="noGoogle" checked /> Not on Google</label>
-            <label class="check"><input type="checkbox" name="mode" value="onGoogleNoWebsite" checked /> On Google, no website</label>
-            <label class="check"><input type="checkbox" name="mode" value="instagram" checked /> Instagram, no site / no booking</label>
-          </fieldset>
-          <button type="submit" class="primary">Run hunt</button>
-        </form>
-        <p id="hunt-status" class="status">Paste a postcode or take one from the ticket machine.</p>
-        <p id="ig-links" class="hint hidden"></p>
-        <div id="summary" class="summary hidden"></div>
-        <div id="results" class="results"></div>
-        <div class="row" id="result-actions" hidden>
-          <button id="save-hot" class="ghost">Save hot + warm</button>
+      <main id="panel-desk" class="desk">
+        <section class="ticket">
+          <p class="stamp">Next unused</p>
+          <p class="meta" id="ticket-place">Set a filter, then take a code.</p>
+          <p class="code" id="ticket-code">—</p>
+          <p class="remain" id="ticket-remain">— left in this filter</p>
+          <div class="filters">
+            <label>
+              Country
+              <select id="country">
+                <option value="GB">United Kingdom</option>
+                <option value="US">United States</option>
+              </select>
+            </label>
+            <label id="nation-wrap">
+              Nation
+              <select id="nation">
+                <option value="England">England</option>
+                <option value="Scotland">Scotland</option>
+                <option value="Wales">Wales</option>
+                <option value="Northern Ireland">Northern Ireland</option>
+                <option value="all">All UK</option>
+              </select>
+            </label>
+            <label id="town-wrap">
+              Town
+              <input id="town" list="towns" placeholder="optional, e.g. Manchester" />
+              <datalist id="towns"></datalist>
+            </label>
+            <label id="area-wrap">
+              Area letters
+              <input id="area" placeholder="optional, e.g. M or SW" maxlength="4" />
+            </label>
+            <label id="metro-wrap" class="hidden">
+              Metro
+              <select id="metro"></select>
+            </label>
+          </div>
+          <div class="row">
+            <button id="give" class="primary">Give me the next postcode</button>
+            <button id="hunt-ticket" class="ghost">Hunt this one</button>
+          </div>
+          <div class="row slim">
+            <button id="undo" class="text">Undo last given</button>
+          </div>
+          <p class="hint">
+            Once a code is given, it is burnt. Use it, then take the next. Undo only if you hit the button by accident.
+          </p>
+        </section>
+
+        <section class="hunt">
+          <p class="stamp">Hunt</p>
+          <form id="hunt-form">
+            <label>
+              Postcode
+              <input id="hunt-postcode" required placeholder="M1 or M1 1AE or 90210" autocomplete="off" />
+            </label>
+            <label>
+              Niche
+              <select id="niche">
+                <option value="all">Anything local</option>
+                <option value="beauty">Hair / beauty</option>
+                <option value="trades">Trades</option>
+                <option value="food">Food</option>
+                <option value="auto">Auto</option>
+                <option value="health">Health</option>
+                <option value="fitness">Fitness</option>
+                <option value="home">Home / florists / laundry</option>
+              </select>
+            </label>
+            <fieldset>
+              <legend>What to keep</legend>
+              <label class="check"><input type="checkbox" name="mode" value="noWebsite" checked /> No website</label>
+              <label class="check"><input type="checkbox" name="mode" value="noGoogle" checked /> Not on Google</label>
+              <label class="check"><input type="checkbox" name="mode" value="onGoogleNoWebsite" checked /> On Google, no website</label>
+              <label class="check"><input type="checkbox" name="mode" value="instagram" checked /> Instagram, no site / no booking</label>
+            </fieldset>
+            <button type="submit" class="primary">Run hunt</button>
+          </form>
+          <p id="hunt-status" class="status">Paste a postcode or take one from the ticket machine.</p>
+          <p id="ig-links" class="hint hidden"></p>
+          <div id="summary" class="summary hidden"></div>
+          <div id="results" class="results"></div>
+          <div class="row" id="result-actions" hidden>
+            <button id="save-hot" class="ghost">Save hot + warm</button>
+          </div>
+        </section>
+      </main>
+
+      <section id="panel-saved" class="hidden stack">
+        <div class="row">
+          <h2>Saved leads</h2>
+          <button class="ghost" id="download-csv" type="button">Download CSV</button>
         </div>
+        <div id="saved" class="results"></div>
       </section>
-    </main>
 
-    <section id="panel-saved" class="hidden stack">
-      <div class="row">
-        <h2>Saved leads</h2>
-        <button class="ghost" id="download-csv" type="button">Download CSV</button>
-      </div>
-      <div id="saved" class="results"></div>
-    </section>
-
-    <section id="panel-used" class="hidden stack">
-      <h2>Used postcodes</h2>
-      <p class="hint">These will never come out of the ticket machine again unless you restore them.</p>
-      <div id="used" class="used-list"></div>
-    </section>
+      <section id="panel-used" class="hidden stack">
+        <h2>Used postcodes</h2>
+        <p class="hint">These will never come out of the ticket machine again unless you restore them.</p>
+        <div id="used" class="used-list"></div>
+      </section>
+    </div>
 
     <script type="module" src="./app.js"></script>
   </body>
