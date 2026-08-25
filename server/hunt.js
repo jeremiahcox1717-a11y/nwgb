@@ -30,7 +30,7 @@ function keepLead(lead, modes) {
   return false;
 }
 
-export async function runHunt({ postcode, modes, niche, radius, onEvent }) {
+export async function runHunt({ postcode, modes, niche, radius, onEvent = () => {} }) {
   const geo = await geocodePostcode(postcode);
   if (!geo.ok) {
     onEvent("fail", { message: geo.error });

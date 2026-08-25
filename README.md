@@ -11,24 +11,33 @@ You feed it a postcode. It hunts for local businesses that are still offline in 
 
 It also hands you **one unused postcode at a time**. Once a code has been given, it is burnt. The machine will not offer it twice unless you restore it.
 
-## Run it
+## Open the desk
+
+The live site is:
+
+**https://jeremiahcox1717-a11y.github.io/nwgb/**
+
+It asks for a PIN. The PIN is not stored in this README. Jordan has it.
+
+Your leads and used postcodes stay in **your browser** (they are not shared with anyone else who might guess the URL). Search engines are told not to index it.
+
+After you merge this to `main`, GitHub Actions publishes the `gh-pages` branch. One-time GitHub click if the site 404s:
+
+1. Repo **Settings → Pages**
+2. Source: **Deploy from a branch**
+3. Branch: **`gh-pages`**, folder: **/ (root)**
+4. Save
+
+Do **not** make this repository public without a PIN, and do not post the live URL.
+
+### Optional: run it on your computer
 
 ```bash
 npm install
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-Optional `.env` (copy from `.env.example`):
-
-| Variable | What it does |
-| --- | --- |
-| `OWNER_NAME` | Name on the desk. Defaults to Jordan. |
-| `APP_PIN` | Locks the desk if you ever expose the port. |
-| `GOOGLE_PLACES_API_KEY` | Turns on a live Google Places sweep for listings with no website. |
-
-Without a Google key, hunts still run. OpenStreetMap supplies the street businesses, then the desk checks the public web for a Maps footprint. Instagram is pulled from public search results. Both of those nets can be thin; every card still has Maps / Google / Instagram links so you can finish the check in one click.
+Then open [http://localhost:3000](http://localhost:3000) and use the same PIN.
 
 ## How to work a town
 

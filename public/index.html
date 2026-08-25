@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>NWGB · private desk</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23100e0c' width='64' height='64'/><text x='8' y='44' font-size='28' fill='%23d7b07a' font-family='serif'>N</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div id="lock" class="lock hidden">
+    <div id="lock" class="lock">
       <div class="lock-card">
         <p class="eyebrow">Private desk</p>
         <h1>PIN</h1>
-        <p>This machine is not a product. Type the PIN Jordan set.</p>
+        <p>This machine is only for Jordan. Type the PIN.</p>
         <form id="lock-form">
           <input id="pin" type="password" autocomplete="current-password" placeholder="PIN" />
           <button type="submit">Unlock</button>
@@ -132,7 +133,7 @@
     <section id="panel-saved" class="hidden stack">
       <div class="row">
         <h2>Saved leads</h2>
-        <a class="ghost" href="/api/leads.csv">Download CSV</a>
+        <button class="ghost" id="download-csv" type="button">Download CSV</button>
       </div>
       <div id="saved" class="results"></div>
     </section>
@@ -143,6 +144,6 @@
       <div id="used" class="used-list"></div>
     </section>
 
-    <script src="/app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

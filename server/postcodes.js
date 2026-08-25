@@ -1,28 +1,13 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { compactPostcode, outcodeFrom } from "./classify.js";
+import { dataFile } from "./data-files.js";
 import { getStore, updateStore } from "./store.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UK_PATH = path.join(__dirname, "..", "data", "uk-outcodes.json");
-const US_PATH = path.join(__dirname, "..", "data", "us-metros.json");
-
-let ukCache;
-let usCache;
-
 export function ukOutcodes() {
-  if (!ukCache) {
-    ukCache = JSON.parse(fs.readFileSync(UK_PATH, "utf8"));
-  }
-  return ukCache;
+  return dataFile("uk-outcodes.json");
 }
 
 export function usMetros() {
-  if (!usCache) {
-    usCache = JSON.parse(fs.readFileSync(US_PATH, "utf8"));
-  }
-  return usCache;
+  return dataFile("us-metros.json");
 }
 
 export function ukTowns() {

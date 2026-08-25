@@ -5,14 +5,7 @@ import {
   isChainName,
   scoreLead,
 } from "./classify.js";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CHAINS = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "..", "data", "chains.json"), "utf8"),
-);
+import { dataFile } from "./data-files.js";
 
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
@@ -97,7 +90,7 @@ export async function huntOsm({ lat, lon, radius, town, postcode, niche }) {
     const tags = el.tags || {};
     const name = tags.name || tags["name:en"] || tags.operator;
     if (!name) continue;
-    if (isChainName(name, CHAINS)) continue;
+    if (isChainName(name, dataFile("chains.json"))) continue;
     if (categoryFromTags(tags) === "yes") continue;
     const key = `${name.toLowerCase()}|${tags["addr:street"] || ""}|${tags["addr:housenumber"] || ""}`;
     if (seen.has(key)) continue;

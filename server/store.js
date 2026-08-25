@@ -1,17 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-function storePath() {
-  return process.env.NWGB_STORE || path.join(__dirname, "..", "data", "desk.json");
-}
+const KEY = "nwgb-desk-v1";
+let memory = null;
 
 function blank() {
   return {
     version: 1,
-    ownerName: process.env.OWNER_NAME || "Jordan",
+    ownerName: "Jordan",
     given: [],
     leads: [],
     settings: {
@@ -25,20 +18,23 @@ function blank() {
 }
 
 function read() {
-  try {
-    const raw = fs.readFileSync(storePath(), "utf8");
-    return { ...blank(), ...JSON.parse(raw) };
-  } catch {
-    return blank();
+  if (typeof localStorage !== "undefined") {
+    try {
+      const raw = localStorage.getItem(KEY);
+      return raw ? { ...blank(), ...JSON.parse(raw) } : blank();
+    } catch {
+      return blank();
+    }
   }
+  return memory ? { ...blank(), ...JSON.parse(JSON.stringify(memory)) } : blank();
 }
 
 function write(data) {
-  const target = storePath();
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  const tmp = `${target}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
-  fs.renameSync(tmp, target);
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    return data;
+  }
+  memory = JSON.parse(JSON.stringify(data));
   return data;
 }
 
@@ -58,5 +54,3 @@ export function isGiven(code) {
     .replace(/[^A-Z0-9]/g, "");
   return read().given.some((row) => row.compact === compact);
 }
-
-export { storePath };
