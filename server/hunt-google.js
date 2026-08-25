@@ -8,6 +8,11 @@ import {
   snippetSuggestsWebsiteOrBooking,
 } from "./classify.js";
 import { dataFile } from "./data-files.js";
+import {
+  googlePlaceTypesFor,
+  instagramHuntPlans,
+  looksLikeHairTrade,
+} from "./niches.js";
 
 function chains() {
   return dataFile("chains.json");
@@ -119,30 +124,7 @@ export async function enrichWithGoogleWeb(leads, town, onProgress, limit = 10) {
   return leads;
 }
 
-const PLACE_TYPES = [
-  "hair_care",
-  "beauty_salon",
-  "plumber",
-  "electrician",
-  "restaurant",
-  "cafe",
-  "bakery",
-  "florist",
-  "gym",
-  "car_repair",
-  "dentist",
-  "spa",
-  "bar",
-  "meal_takeaway",
-  "pet_store",
-  "locksmith",
-  "painter",
-  "roofing_contractor",
-  "moving_company",
-  "laundry",
-];
-
-export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
+export async function huntGooglePlaces({ lat, lon, radius, town, postcode, niche }) {
   const key = googleKey();
   if (!key) {
     return { skipped: true, leads: [], reason: "no-key" };
@@ -163,7 +145,7 @@ export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
           radius: Number(radius) || 1600,
         },
       },
-      includedTypes: PLACE_TYPES.slice(0, 20),
+      includedTypes: googlePlaceTypesFor(niche),
       maxResultCount: 20,
     }),
     timeoutMs: 20000,
@@ -216,58 +198,52 @@ export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
 }
 
 export async function huntInstagram({ town, postcode, niche }) {
-  const nicheWords = {
-    all: "salon OR barber OR plumber OR florist OR bakery OR cafe OR gym OR nails OR beauty OR electrician",
-    beauty: "salon OR barber OR nails OR beauty OR tattoo OR spa",
-    trades: "plumber OR electrician OR roofer OR locksmith OR builder",
-    food: "bakery OR cafe OR restaurant OR butcher",
-    auto: "garage OR mechanic OR detailing",
-    health: "dentist OR physio OR clinic",
-    fitness: "gym OR pilates OR yoga OR pt",
-    home: "florist OR cleaner OR laundry OR curtains",
-  };
   const place = town || postcode;
-  const query = `site:instagram.com "${place}" (${nicheWords[niche] || nicheWords.all})`;
-  const results = await duckSearch(query);
+  const plans = instagramHuntPlans(place, niche || "all");
   const seen = new Set();
   const leads = [];
 
-  for (const result of results) {
-    const handle = instagramHandleFromUrl(result.href);
-    if (!handle) continue;
-    const key = handle.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    if (isChainName(handle, chains()) || isChainName(result.title, chains())) continue;
-    const suggestsSite = snippetSuggestsWebsiteOrBooking(
-      `${result.title} ${result.snippet}`,
-    );
-    const instagram = `https://instagram.com/${handle}`;
-    leads.push({
-      id: `ig-${key}`,
-      name: result.title.replace(/\s*[•|·-]\s*Instagram.*$/i, "").trim() || handle,
-      category: "instagram",
-      address: place,
-      phone: null,
-      email: null,
-      postcode,
-      lat: null,
-      lon: null,
-      source: "instagram",
-      hasWebsite: suggestsSite,
-      hasBooking: suggestsSite,
-      hasSocial: true,
-      website: null,
-      booking: null,
-      instagram,
-      google: "unknown",
-      score: suggestsSite ? "watch" : "warm",
-      snippet: result.snippet,
-      googleSearch: `https://www.google.com/search?q=${encodeURIComponent(`"${handle}" ${place} website OR booking`)}`,
-      mapsSearch: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${result.title} ${place}`)}`,
-      instagramSearch: instagram,
-    });
+  for (let i = 0; i < plans.length; i += 1) {
+    const plan = plans[i];
+    const results = await duckSearch(plan.query);
+    for (const result of results) {
+      const handle = instagramHandleFromUrl(result.href);
+      if (!handle) continue;
+      const key = handle.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (isChainName(handle, chains()) || isChainName(result.title, chains())) continue;
+      const blob = `${handle} ${result.title} ${result.snippet}`;
+      if (plan.match === "hair" && !looksLikeHairTrade(blob)) continue;
+      const suggestsSite = snippetSuggestsWebsiteOrBooking(blob);
+      const instagram = `https://instagram.com/${handle}`;
+      leads.push({
+        id: `ig-${key}`,
+        name: result.title.replace(/\s*[•|·-]\s*Instagram.*$/i, "").trim() || handle,
+        category: plan.label || "instagram",
+        address: place,
+        phone: null,
+        email: null,
+        postcode,
+        lat: null,
+        lon: null,
+        source: "instagram",
+        hasWebsite: suggestsSite,
+        hasBooking: suggestsSite,
+        hasSocial: true,
+        website: null,
+        booking: null,
+        instagram,
+        google: "unknown",
+        score: suggestsSite ? "watch" : "warm",
+        snippet: result.snippet,
+        googleSearch: `https://www.google.com/search?q=${encodeURIComponent(`"${handle}" ${place} website OR booking`)}`,
+        mapsSearch: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${result.title} ${place}`)}`,
+        instagramSearch: instagram,
+      });
+    }
+    if (i < plans.length - 1) await sleep(250);
   }
 
-  return { query, leads };
+  return { query: plans[0]?.query || "", queries: plans, leads };
 }

@@ -6,32 +6,20 @@ import {
   scoreLead,
 } from "./classify.js";
 import { dataFile } from "./data-files.js";
+import { OSM_NICHE_REGEX } from "./niches.js";
 
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
 ];
 
-const NICHE_REGEX = {
-  all: null,
-  beauty:
-    "hairdresser|beauty|nails|tattoo|massage|cosmetic|chemist|perfumery",
-  trades:
-    "trade|electrician|plumber|carpenter|painter|roofer|locksmith|handyman|builder|window_blind",
-  food: "restaurant|cafe|bar|pub|fast_food|bakery|butcher|greengrocer|deli|ice_cream",
-  auto: "car_repair|car|tyres|fuel|car_wash",
-  health: "pharmacy|dentist|doctors|clinic|physiotherapist|optician|veterinary",
-  fitness: "fitness_centre|sports_centre|yoga|pilates",
-  home: "florist|laundry|dry_cleaning|funeral_directors|estate_agent|furniture|bed|kitchen|bathroom_furnishing",
-};
-
 function overpassQuery(lat, lon, radius, niche) {
   const around = `(around:${radius},${lat},${lon})`;
-  if (niche && niche !== "all" && NICHE_REGEX[niche]) {
+  if (niche && niche !== "all" && OSM_NICHE_REGEX[niche]) {
     return `
 [out:json][timeout:28];
 (
-  nwr[~"^(shop|craft|amenity|office|leisure|tourism)$"~"${NICHE_REGEX[niche]}"]${around};
+  nwr[~"^(shop|craft|amenity|office|leisure|tourism)$"~"${OSM_NICHE_REGEX[niche]}"]${around};
 );
 out tags center 120;
 `.trim();

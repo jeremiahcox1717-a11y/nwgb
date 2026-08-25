@@ -7,6 +7,7 @@ import {
   huntInstagram,
 } from "./hunt-google.js";
 import { scoreLead } from "./classify.js";
+import { instagramSearchLinks } from "./niches.js";
 
 function emit(res, event, data) {
   res.write(`event: ${event}\n`);
@@ -76,6 +77,7 @@ export async function runHunt({ postcode, modes, niche, radius, onEvent = () => 
       radius: meters,
       town: geo.town,
       postcode: geo.postcode || postcode,
+      niche: niche || "all",
     });
     if (places.skipped) {
       onEvent("status", {
@@ -95,13 +97,16 @@ export async function runHunt({ postcode, modes, niche, radius, onEvent = () => 
       const ig = await huntInstagram({
         town: geo.town,
         postcode: geo.postcode || postcode,
-        niche: niche || "all",
+        niche: niche || "beauty",
       });
       all.push(...ig.leads);
+      const searches = instagramSearchLinks(ig.queries || [{ label: "Instagram", query: ig.query }]);
       onEvent("instagramQuery", {
         query: ig.query,
-        googleUrl: `https://www.google.com/search?q=${encodeURIComponent(ig.query)}`,
-        bingUrl: `https://www.bing.com/search?q=${encodeURIComponent(ig.query)}`,
+        queries: ig.queries,
+        searches,
+        googleUrl: searches[0]?.googleUrl,
+        bingUrl: searches[0]?.bingUrl,
       });
       onEvent("status", {
         message: ig.leads.length
