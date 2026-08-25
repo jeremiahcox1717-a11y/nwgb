@@ -1,0 +1,17 @@
+{
+  "name": "NWGB",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "desk",
+      "command": "npm start",
+      "description": "NWGB Express desk server on http://localhost:3000"
+    }
+  ],
+  "ports": [
+    {
+      "name": "desk",
+      "port": 3000
+    }
+  ]
+}
