@@ -387,14 +387,33 @@ function downloadCsv() {
   URL.revokeObjectURL(url);
 }
 
+$("lock-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const pin = String($("pin").value || "").trim();
+  $("lock-error").classList.add("hidden");
+  try {
+    if (await pinMatches(pin)) {
+      sessionStorage.setItem("nwgb-pin", pin);
+      $("lock").classList.add("hidden");
+      await boot();
+    } else {
+      $("lock-error").classList.remove("hidden");
+    }
+  } catch (err) {
+    $("lock").classList.remove("hidden");
+    $("lock-error").textContent = err.message || "Could not unlock.";
+    $("lock-error").classList.remove("hidden");
+  }
+});
+
 document.querySelectorAll("nav [data-panel]").forEach((btn) => {
   btn.addEventListener("click", () => showPanel(btn.dataset.panel));
 });
 
-$("continent").addEventListener("change", () => onCascadeChange("continent"));
-$("language").addEventListener("change", () => onCascadeChange("language"));
-$("country").addEventListener("change", () => onCascadeChange("country"));
-$("city").addEventListener("change", () => onCascadeChange("city"));
+$("continent")?.addEventListener("change", () => onCascadeChange("continent"));
+$("language")?.addEventListener("change", () => onCascadeChange("language"));
+$("country")?.addEventListener("change", () => onCascadeChange("country"));
+$("city")?.addEventListener("change", () => onCascadeChange("city"));
 
 $("give").addEventListener("click", giveNext);
 $("hunt-ticket").addEventListener("click", () => {
@@ -415,18 +434,6 @@ $("save-hot").addEventListener("click", () => {
   saveLeads(state.leads.filter((l) => l.score === "hot" || l.score === "warm"));
 });
 $("download-csv").addEventListener("click", downloadCsv);
-$("lock-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const pin = $("pin").value;
-  if (await pinMatches(pin)) {
-    sessionStorage.setItem("nwgb-pin", pin);
-    $("lock").classList.add("hidden");
-    $("lock-error").classList.add("hidden");
-    await boot();
-  } else {
-    $("lock-error").classList.remove("hidden");
-  }
-});
 
 async function boot() {
   if (location.protocol === "file:") {
