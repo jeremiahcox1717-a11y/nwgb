@@ -1,29 +1,34 @@
+import { pinMatches } from "./server/access.js";
+import { initData } from "./server/data-files.js";
+import { getStore, updateStore } from "./server/store.js";
+import {
+  nextPostcode,
+  remainingCount,
+  restoreGiven,
+  ukTowns,
+  undoLastGiven,
+  usMetros,
+} from "./server/postcodes.js";
+import { runHunt } from "./server/hunt.js";
+
 const state = {
-  pin: sessionStorage.getItem("nwgb-pin") || "",
+  unlocked: false,
   me: null,
   ticket: null,
   leads: [],
-  saved: [],
-  used: [],
 };
 
 const $ = (id) => document.getElementById(id);
 
-function headers() {
-  const h = { "Content-Type": "application/json" };
-  if (state.pin) h["x-desk-pin"] = state.pin;
-  return h;
-}
-
-async function api(path, options = {}) {
-  const res = await fetch(path, { ...options, headers: { ...headers(), ...(options.headers || {}) } });
-  if (res.status === 401) {
-    $("lock").classList.remove("hidden");
-    throw new Error("pin");
-  }
-  if (!res.ok) throw new Error(`request failed ${res.status}`);
-  if ((res.headers.get("content-type") || "").includes("json")) return res.json();
-  return res.text();
+function meFromStore() {
+  const store = getStore();
+  return {
+    ownerName: store.ownerName || "Jordan",
+    settings: store.settings,
+    remaining: remainingCount(store.settings),
+    towns: ukTowns().slice(0, 80),
+    metros: usMetros().map((m) => m.name),
+  };
 }
 
 function showPanel(name) {
@@ -46,7 +51,6 @@ function fillMe(me) {
   if (me.settings.metro) $("metro").value = me.settings.metro;
   $("ticket-remain").textContent = `${me.remaining} left in this filter`;
   toggleCountry();
-  if (me.pinRequired && !state.pin) $("lock").classList.remove("hidden");
 }
 
 function toggleCountry() {
@@ -67,8 +71,11 @@ function filters() {
   };
 }
 
-function query(obj) {
-  return new URLSearchParams(obj).toString();
+function persistFilters() {
+  updateStore((current) => {
+    current.settings = { ...current.settings, ...filters() };
+    return current;
+  });
 }
 
 function setTicket(ticket) {
@@ -86,20 +93,20 @@ function setTicket(ticket) {
   $("hunt-postcode").value = ticket.code;
 }
 
-async function giveNext() {
+function giveNext() {
+  persistFilters();
   $("give").disabled = true;
   try {
-    const ticket = await api(`/api/postcodes/next?${query(filters())}`);
-    setTicket(ticket);
-    await refreshRemaining();
+    setTicket(nextPostcode(filters()));
+    refreshRemaining();
   } finally {
     $("give").disabled = false;
   }
 }
 
-async function refreshRemaining() {
-  const data = await api(`/api/postcodes/remaining?${query(filters())}`);
-  if (!state.ticket) $("ticket-remain").textContent = `${data.remaining} left in this filter`;
+function refreshRemaining() {
+  persistFilters();
+  if (!state.ticket) $("ticket-remain").textContent = `${remainingCount(filters())} left in this filter`;
 }
 
 function modes() {
@@ -145,15 +152,19 @@ function card(lead, saved) {
     </div>
   `;
   el.querySelector("[data-save]")?.addEventListener("click", () => saveLeads([lead]));
-  el.querySelector("[data-status]")?.addEventListener("click", async () => {
-    await api(`/api/leads/${encodeURIComponent(lead.id)}`, {
-      method: "PATCH",
-      body: JSON.stringify({ status: "contacted" }),
+  el.querySelector("[data-status]")?.addEventListener("click", () => {
+    updateStore((current) => {
+      const row = current.leads.find((item) => item.id === lead.id);
+      if (row) row.status = "contacted";
+      return current;
     });
     loadSaved();
   });
-  el.querySelector("[data-delete]")?.addEventListener("click", async () => {
-    await api(`/api/leads/${encodeURIComponent(lead.id)}`, { method: "DELETE" });
+  el.querySelector("[data-delete]")?.addEventListener("click", () => {
+    updateStore((current) => {
+      current.leads = current.leads.filter((row) => row.id !== lead.id);
+      return current;
+    });
     loadSaved();
   });
   return el;
@@ -189,76 +200,79 @@ function renderSummary(summary) {
   `;
 }
 
-function runHunt(postcode) {
+async function startHunt(postcode) {
   if (!postcode) return;
   $("hunt-postcode").value = postcode;
   $("hunt-status").textContent = `Hunting ${postcode}…`;
   $("results").innerHTML = "";
   $("summary").classList.add("hidden");
   $("ig-links").classList.add("hidden");
-  const params = query({
-    postcode,
-    modes: modes().join(","),
-    niche: $("niche").value,
-    radius: "1600",
-    ...(state.pin ? { pin: state.pin } : {}),
-  });
-  const es = new EventSource(`/api/hunt/stream?${params}`);
-  let finished = false;
-  es.addEventListener("status", (e) => {
-    $("hunt-status").textContent = JSON.parse(e.data).message;
-  });
-  es.addEventListener("instagramQuery", (e) => {
-    const data = JSON.parse(e.data);
-    $("ig-links").classList.remove("hidden");
-    $("ig-links").innerHTML = `Instagram hunt: <a class="ghost" target="_blank" rel="noreferrer" href="${data.googleUrl}">Google this query</a> <a class="ghost" target="_blank" rel="noreferrer" href="${data.bingUrl}">Bing</a> — open a profile, if the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
-  });
-  es.addEventListener("fail", (e) => {
-    finished = true;
-    $("hunt-status").textContent = JSON.parse(e.data).message;
-    es.close();
-  });
-  es.addEventListener("done", (e) => {
-    finished = true;
-    const data = JSON.parse(e.data);
+  try {
+    const data = await runHunt({
+      postcode,
+      modes: modes(),
+      niche: $("niche").value,
+      radius: 1600,
+      onEvent: (event, payload) => {
+        if (event === "status") $("hunt-status").textContent = payload.message;
+        if (event === "instagramQuery") {
+          $("ig-links").classList.remove("hidden");
+          $("ig-links").innerHTML = `Instagram hunt: <a class="ghost" target="_blank" rel="noreferrer" href="${payload.googleUrl}">Google this query</a> <a class="ghost" target="_blank" rel="noreferrer" href="${payload.bingUrl}">Bing</a> — open a profile, if the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
+        }
+        if (event === "fail") $("hunt-status").textContent = payload.message;
+      },
+    });
+    if (!data.ok) return;
     $("hunt-status").textContent = `Done. ${data.leads.length} leads around ${data.geo.display || postcode}.`;
     renderSummary(data.summary);
     renderResults(data.leads);
-    es.close();
+  } catch (err) {
+    $("hunt-status").textContent = err.message || "Hunt failed.";
+  }
+}
+
+function saveLeads(leads) {
+  const incoming = Array.isArray(leads) ? leads : [leads];
+  updateStore((current) => {
+    for (const lead of incoming) {
+      if (!lead?.name) continue;
+      const id = lead.id || `saved-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const exists = current.leads.find(
+        (row) => row.id === id || (row.name === lead.name && row.postcode === lead.postcode),
+      );
+      if (exists) continue;
+      current.leads.unshift({
+        ...lead,
+        id,
+        status: lead.status || "new",
+        savedAt: new Date().toISOString(),
+      });
+    }
+    return current;
   });
-  es.onerror = () => {
-    if (finished) return;
-    $("hunt-status").textContent = "Hunt stream dropped.";
-    es.close();
-  };
+  $("hunt-status").textContent = `Saved ${incoming.length} lead${incoming.length === 1 ? "" : "s"}.`;
 }
 
-async function saveLeads(leads) {
-  await api("/api/leads", { method: "POST", body: JSON.stringify({ leads }) });
-  $("hunt-status").textContent = `Saved ${leads.length} lead${leads.length === 1 ? "" : "s"}.`;
-}
-
-async function loadSaved() {
-  const data = await api("/api/leads");
-  state.saved = data.leads;
+function loadSaved() {
+  const leads = getStore().leads;
   const box = $("saved");
   box.innerHTML = "";
-  if (!data.leads.length) {
+  if (!leads.length) {
     box.innerHTML = `<p class="hint">Nothing saved yet. Hunt, then keep the hot ones.</p>`;
     return;
   }
-  data.leads.forEach((lead) => box.appendChild(card(lead, true)));
+  leads.forEach((lead) => box.appendChild(card(lead, true)));
 }
 
-async function loadUsed() {
-  const data = await api("/api/postcodes/used");
+function loadUsed() {
+  const given = getStore().given;
   const box = $("used");
   box.innerHTML = "";
-  if (!data.given.length) {
+  if (!given.length) {
     box.innerHTML = `<p class="hint">No codes given yet.</p>`;
     return;
   }
-  data.given.forEach((row) => {
+  given.forEach((row) => {
     const el = document.createElement("div");
     el.className = "used-row";
     el.innerHTML = `
@@ -266,16 +280,42 @@ async function loadUsed() {
       <span>${escapeHtml([row.town, row.nation, row.givenAt?.slice(0, 10)].filter(Boolean).join(" · "))}</span>
       <button class="text">Restore</button>
     `;
-    el.querySelector("button").addEventListener("click", async () => {
-      await api("/api/postcodes/restore", {
-        method: "POST",
-        body: JSON.stringify({ compact: row.compact }),
-      });
+    el.querySelector("button").addEventListener("click", () => {
+      restoreGiven(row.compact);
       loadUsed();
       refreshRemaining();
     });
     box.appendChild(el);
   });
+}
+
+function downloadCsv() {
+  const leads = getStore().leads;
+  const cols = [
+    "name",
+    "score",
+    "category",
+    "address",
+    "phone",
+    "postcode",
+    "google",
+    "website",
+    "instagram",
+    "booking",
+    "source",
+    "status",
+  ];
+  const lines = [cols.join(",")];
+  for (const lead of leads) {
+    lines.push(cols.map((col) => `"${String(lead[col] ?? "").replace(/"/g, '""')}"`).join(","));
+  }
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "nwgb-leads.csv";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 document.querySelectorAll("nav [data-panel]").forEach((btn) => {
@@ -293,30 +333,31 @@ $("country").addEventListener("change", () => {
 $("give").addEventListener("click", giveNext);
 $("hunt-ticket").addEventListener("click", () => {
   const code = state.ticket?.code || $("hunt-postcode").value;
-  if (code) runHunt(code);
+  if (code) startHunt(code);
 });
-$("undo").addEventListener("click", async () => {
-  const data = await api("/api/postcodes/undo", { method: "POST" });
-  $("ticket-code").textContent = data.removed?.code ? `undid ${data.removed.code}` : "—";
+$("undo").addEventListener("click", () => {
+  const removed = undoLastGiven();
+  $("ticket-code").textContent = removed?.code ? `undid ${removed.code}` : "—";
   state.ticket = null;
   refreshRemaining();
 });
 $("hunt-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  runHunt($("hunt-postcode").value.trim());
+  startHunt($("hunt-postcode").value.trim());
 });
 $("save-hot").addEventListener("click", () => {
   saveLeads(state.leads.filter((l) => l.score === "hot" || l.score === "warm"));
 });
+$("download-csv").addEventListener("click", downloadCsv);
 $("lock-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  state.pin = $("pin").value;
-  try {
-    await api("/api/unlock", { method: "POST", body: JSON.stringify({ pin: state.pin }) });
-    sessionStorage.setItem("nwgb-pin", state.pin);
+  const pin = $("pin").value;
+  if (await pinMatches(pin)) {
+    sessionStorage.setItem("nwgb-pin", pin);
     $("lock").classList.add("hidden");
-    boot();
-  } catch {
+    $("lock-error").classList.add("hidden");
+    await boot();
+  } else {
     $("lock-error").classList.remove("hidden");
   }
 });
@@ -324,15 +365,21 @@ $("lock-form").addEventListener("submit", async (e) => {
 async function boot() {
   if (location.protocol === "file:") {
     $("hunt-status").textContent =
-      "This file is not the website. Double-click start.bat (Windows) or start.command (Mac), then open http://localhost:3000.";
+      "This file is not the website. Use the GitHub Pages link or run npm start, then open http://localhost:3000.";
     return;
   }
-  try {
-    const me = await api("/api/me");
-    fillMe(me);
-  } catch (err) {
-    if (err.message !== "pin") $("hunt-status").textContent = err.message;
-  }
+  await initData();
+  fillMe(meFromStore());
 }
 
-boot();
+async function start() {
+  const saved = sessionStorage.getItem("nwgb-pin") || "";
+  if (saved && (await pinMatches(saved))) {
+    $("lock").classList.add("hidden");
+    await boot();
+    return;
+  }
+  $("lock").classList.remove("hidden");
+}
+
+start();

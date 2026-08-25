@@ -7,14 +7,21 @@ import {
   scoreLead,
   snippetSuggestsWebsiteOrBooking,
 } from "./classify.js";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { dataFile } from "./data-files.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CHAINS = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "..", "data", "chains.json"), "utf8"),
-);
+function chains() {
+  return dataFile("chains.json");
+}
+
+function googleKey() {
+  if (typeof process !== "undefined" && process.env?.GOOGLE_PLACES_API_KEY) {
+    return process.env.GOOGLE_PLACES_API_KEY;
+  }
+  if (typeof localStorage !== "undefined") {
+    return localStorage.getItem("GOOGLE_PLACES_API_KEY") || "";
+  }
+  return "";
+}
 
 function decodeDuckLink(href) {
   try {
@@ -136,7 +143,7 @@ const PLACE_TYPES = [
 ];
 
 export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
-  const key = process.env.GOOGLE_PLACES_API_KEY;
+  const key = googleKey();
   if (!key) {
     return { skipped: true, leads: [], reason: "no-key" };
   }
@@ -176,7 +183,7 @@ export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
   const leads = [];
   for (const place of json.places || []) {
     const name = place.displayName?.text;
-    if (!name || isChainName(name, CHAINS)) continue;
+    if (!name || isChainName(name, chains())) continue;
     const presence = classifyOnlinePresence({}, place.websiteUri ? [place.websiteUri] : []);
     const google = presence.hasWebsite ? "complete" : "blank";
     leads.push({
@@ -231,7 +238,7 @@ export async function huntInstagram({ town, postcode, niche }) {
     const key = handle.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
-    if (isChainName(handle, CHAINS) || isChainName(result.title, CHAINS)) continue;
+    if (isChainName(handle, chains()) || isChainName(result.title, chains())) continue;
     const suggestsSite = snippetSuggestsWebsiteOrBooking(
       `${result.title} ${result.snippet}`,
     );

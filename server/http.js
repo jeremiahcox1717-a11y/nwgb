@@ -5,14 +5,21 @@ export async function fetchText(url, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), options.timeoutMs || 20000);
   try {
+    const headers = {
+      Accept: options.accept || "*/*",
+      ...(options.headers || {}),
+    };
+    if (typeof window === "undefined") {
+      headers["User-Agent"] = headers["User-Agent"] || DEFAULT_UA;
+    } else {
+      delete headers["User-Agent"];
+      delete headers["Referer"];
+      delete headers.Referer;
+    }
     const res = await fetch(url, {
       ...options,
       signal: controller.signal,
-      headers: {
-        "User-Agent": DEFAULT_UA,
-        Accept: options.accept || "*/*",
-        ...(options.headers || {}),
-      },
+      headers,
     });
     const text = await res.text();
     return { ok: res.ok, status: res.status, text, headers: res.headers };

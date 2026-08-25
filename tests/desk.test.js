@@ -8,11 +8,14 @@ const tmp = path.join(os.tmpdir(), `nwgb-desk-${process.pid}.json`);
 process.env.NWGB_STORE = tmp;
 process.env.OWNER_NAME = "Jordan";
 
+const { initData } = await import("../server/data-files.js");
 const postcodes = await import("../server/postcodes.js");
 const classify = await import("../server/classify.js");
+const access = await import("../server/access.js");
 
-before(() => {
+before(async () => {
   if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+  await initData();
 });
 
 after(() => {
@@ -75,4 +78,10 @@ test("score hot when there is no google profile and no website", () => {
 test("chain names are skipped", () => {
   assert.equal(classify.isChainName("Greggs", ["greggs", "tesco"]), true);
   assert.equal(classify.isChainName("Nina's Clippers", ["greggs", "tesco"]), false);
+});
+
+test("desk PIN hash rejects a wrong guess", async () => {
+  assert.equal(await access.pinMatches(""), false);
+  assert.equal(await access.pinMatches("password"), false);
+  assert.equal(access.PIN_HASH.length, 64);
 });
