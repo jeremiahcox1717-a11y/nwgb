@@ -267,6 +267,25 @@ button:disabled {
   font-size: 12px;
 }
 
+.phone-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+a.phone {
+  color: var(--brass);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+a.phone:hover {
+  text-decoration: underline;
+}
+
 .links {
   display: flex;
   flex-wrap: wrap;

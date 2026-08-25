@@ -3,6 +3,7 @@ import { markGiven } from "./postcodes.js";
 import { huntOsm } from "./hunt-osm.js";
 import {
   enrichWithGoogleWeb,
+  fillMissingPhones,
   huntGooglePlaces,
   huntInstagram,
 } from "./hunt-google.js";
@@ -131,6 +132,20 @@ export async function runHunt({ postcode, modes, niche, radius, onEvent }) {
     const order = { hot: 0, warm: 1, watch: 2 };
     return (order[a.score] ?? 9) - (order[b.score] ?? 9) || a.name.localeCompare(b.name);
   });
+
+  const needingPhone = unique.filter((lead) => !lead.phone).length;
+  if (needingPhone) {
+    onEvent("status", {
+      message: `Checking public listings for phone numbers (${needingPhone} without one)…`,
+    });
+    await fillMissingPhones(unique, geo.town, (message) => onEvent("status", { message }));
+  }
+  const withPhone = unique.filter((lead) => lead.phone).length;
+  if (withPhone) {
+    onEvent("status", {
+      message: `${withPhone} of ${unique.length} leads have a public phone number.`,
+    });
+  }
 
   const summary = {
     hot: unique.filter((l) => l.score === "hot").length,

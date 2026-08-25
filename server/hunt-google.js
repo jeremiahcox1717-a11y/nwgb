@@ -7,6 +7,7 @@ import {
   scoreLead,
   snippetSuggestsWebsiteOrBooking,
 } from "./classify.js";
+import { extractPublicPhone, normalizePhone, phonesFromHtml, sharePhonesByName } from "./phone.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,18 +54,40 @@ export function parseDuckResults(html) {
 }
 
 export async function duckSearch(query) {
-  const body = new URLSearchParams({ q: query, kl: "uk-en" }).toString();
-  const res = await fetchText("https://html.duckduckgo.com/html/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Referer: "https://html.duckduckgo.com/",
-    },
-    body,
-    timeoutMs: 15000,
-  });
-  if (!res.ok) return [];
-  return parseDuckResults(res.text);
+  const searchHeaders = {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+    Accept: "text/html,application/xhtml+xml",
+    Referer: "https://html.duckduckgo.com/",
+  };
+  const attempts = [
+    () =>
+      fetchText(`https://html.duckduckgo.com/html/?kl=uk-en&q=${encodeURIComponent(query)}`, {
+        headers: searchHeaders,
+        timeoutMs: 15000,
+      }),
+    () =>
+      fetchText("https://html.duckduckgo.com/html/", {
+        method: "POST",
+        headers: {
+          ...searchHeaders,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ q: query, kl: "uk-en" }).toString(),
+        timeoutMs: 15000,
+      }),
+  ];
+  for (const attempt of attempts) {
+    try {
+      const res = await attempt();
+      if (!res.ok) continue;
+      const results = parseDuckResults(res.text);
+      if (results.length) return results;
+    } catch {
+      // try the other request shape
+    }
+  }
+  return [];
 }
 
 function looksLikeMapsHit(result) {
@@ -78,6 +101,13 @@ function looksLikeMapsHit(result) {
   );
 }
 
+export function phoneFromSearchResults(results) {
+  const blob = (results || [])
+    .map((row) => `${row.title || ""} ${row.snippet || ""}`)
+    .join(" ");
+  return extractPublicPhone(blob);
+}
+
 export async function checkGooglePresence(lead, town) {
   const query = `"${lead.name}" ${town || lead.postcode || ""}`;
   const results = await duckSearch(query);
@@ -85,10 +115,11 @@ export async function checkGooglePresence(lead, town) {
   const websiteHit = results
     .map((r) => r.href)
     .find((href) => isRealWebsite(href) && !/facebook|instagram|tiktok/i.test(href));
-  if (maps && websiteHit) return { google: "complete", website: websiteHit };
-  if (maps && !websiteHit) return { google: "blank", website: null };
-  if (!maps && websiteHit) return { google: "none", website: websiteHit };
-  return { google: maps ? "blank" : "none", website: null };
+  const phone = phoneFromSearchResults(results);
+  if (maps && websiteHit) return { google: "complete", website: websiteHit, phone };
+  if (maps && !websiteHit) return { google: "blank", website: null, phone };
+  if (!maps && websiteHit) return { google: "none", website: websiteHit, phone };
+  return { google: maps ? "blank" : "none", website: null, phone };
 }
 
 export async function enrichWithGoogleWeb(leads, town, onProgress, limit = 10) {
@@ -103,12 +134,79 @@ export async function enrichWithGoogleWeb(leads, town, onProgress, limit = 10) {
         lead.website = result.website;
         lead.hasWebsite = true;
       }
+      if (!lead.phone && result.phone) lead.phone = result.phone;
       lead.score = scoreLead(lead);
     } catch {
       lead.google = lead.google || "unknown";
     }
     await sleep(400);
   }
+  return leads;
+}
+
+export async function lookupPublicPhone(lead, town) {
+  const place = town || lead.postcode || "";
+  const results = await duckSearch(`"${lead.name}" ${place} (phone OR tel OR telephone)`);
+  if (!results.length) return { phone: null, searched: false };
+
+  const fromSnippets = phoneFromSearchResults(results);
+  if (fromSnippets) return { phone: fromSnippets, searched: true };
+
+  const skipHost = /google\.|gstatic\.|facebook\.|instagram\.|tiktok\.|youtube\.|duckduckgo\.|bing\.com|x\.com|twitter\./i;
+  const pages = (results || [])
+    .map((row) => row.href)
+    .filter((href) => href && /^https?:/i.test(href) && !skipHost.test(href))
+    .slice(0, 2);
+
+  for (const href of pages) {
+    try {
+      const res = await fetchText(href, {
+        timeoutMs: 10000,
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+          Accept: "text/html,application/xhtml+xml",
+        },
+      });
+      if (!res.ok) continue;
+      const phone = phonesFromHtml(res.text);
+      if (phone) return { phone, searched: true };
+    } catch {
+      // Try the next public page.
+    }
+  }
+  return { phone: null, searched: true };
+}
+
+export async function fillMissingPhones(leads, town, onProgress) {
+  sharePhonesByName(leads);
+  const missing = leads.filter((lead) => !lead.phone);
+  let emptyEngine = 0;
+  for (let i = 0; i < missing.length; i += 1) {
+    const lead = missing[i];
+    onProgress?.(`Looking up a public phone for ${lead.name} (${i + 1}/${missing.length})`);
+    try {
+      const { phone, searched } = await lookupPublicPhone(lead, town);
+      if (phone) {
+        lead.phone = phone;
+        emptyEngine = 0;
+      } else if (!searched) {
+        emptyEngine += 1;
+      } else {
+        emptyEngine = 0;
+      }
+    } catch {
+      emptyEngine += 1;
+    }
+    if (emptyEngine >= 4) {
+      onProgress?.(
+        "Public web search is not answering from this machine. Showing numbers already listed on the map.",
+      );
+      break;
+    }
+    await sleep(250);
+  }
+  sharePhonesByName(leads);
   return leads;
 }
 
@@ -147,7 +245,7 @@ export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": key,
       "X-Goog-FieldMask":
-        "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber,places.googleMapsUri,places.types,places.businessStatus,places.shortFormattedAddress",
+        "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber,places.internationalPhoneNumber,places.googleMapsUri,places.types,places.businessStatus,places.shortFormattedAddress",
     },
     body: JSON.stringify({
       locationRestriction: {
@@ -184,7 +282,10 @@ export async function huntGooglePlaces({ lat, lon, radius, town, postcode }) {
       name,
       category: (place.types || [])[0] || "business",
       address: place.formattedAddress || place.shortFormattedAddress || "",
-      phone: place.nationalPhoneNumber || null,
+      phone:
+        normalizePhone(place.nationalPhoneNumber) ||
+        normalizePhone(place.internationalPhoneNumber) ||
+        null,
       email: null,
       postcode,
       lat,
@@ -241,7 +342,7 @@ export async function huntInstagram({ town, postcode, niche }) {
       name: result.title.replace(/\s*[•|·-]\s*Instagram.*$/i, "").trim() || handle,
       category: "instagram",
       address: place,
-      phone: null,
+      phone: extractPublicPhone(`${result.title} ${result.snippet}`),
       email: null,
       postcode,
       lat: null,
