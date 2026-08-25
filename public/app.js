@@ -205,6 +205,9 @@ function runHunt(postcode) {
   });
   const es = new EventSource(`/api/hunt/stream?${params}`);
   let finished = false;
+  es.addEventListener("status", (e) => {
+    $("hunt-status").textContent = JSON.parse(e.data).message;
+  });
   es.addEventListener("instagramQuery", (e) => {
     const data = JSON.parse(e.data);
     $("ig-links").classList.remove("hidden");
