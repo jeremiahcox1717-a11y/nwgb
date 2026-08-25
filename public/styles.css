@@ -1,115 +1,161 @@
 :root {
-  --bg: #100e0c;
-  --panel: #1b1713;
-  --panel-2: #241f19;
-  --line: #3d3429;
-  --brass: #d7b07a;
-  --cream: #f3ead8;
-  --mute: #9a8f7c;
-  --ember: #e07048;
-  --moss: #8aa36a;
-  --ink: #1a1612;
+  --bg: #000000;
+  --panel: #070707;
+  --panel-2: #0c0c0c;
+  --line: #1c1c1c;
+  --line-strong: #2a2a2a;
+  --white: #f4f4f4;
+  --mute: #7a7a7a;
+  --dim: #4a4a4a;
+  --red: #e11d2a;
+  --hot: #ff2d2d;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: dark;
+}
+
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(1200px 500px at 10% -10%, #2a2118 0%, transparent 55%),
-    var(--bg);
-  color: var(--cream);
-  font-family: Sora, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  font-family: Outfit, system-ui, sans-serif;
 }
 
 body {
-  padding: 28px clamp(16px, 4vw, 48px) 80px;
+  position: relative;
+  padding: 32px clamp(16px, 4vw, 56px) 96px;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+}
+
+.razor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--red);
+  z-index: 40;
+  box-shadow: 0 0 18px rgba(225, 29, 42, 0.55);
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
 }
 
 h1,
 h2 {
-  font-family: Fraunces, Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.03em;
+  font-family: Syne, Outfit, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.05em;
   margin: 0;
+  text-transform: uppercase;
 }
 
 h1 {
-  font-size: clamp(42px, 6vw, 72px);
-  line-height: 0.9;
+  font-size: clamp(52px, 8vw, 92px);
+  line-height: 0.78;
+}
+
+h2 {
+  font-size: 28px;
+}
+
+.dot {
+  color: var(--red);
+  margin-left: 2px;
 }
 
 .eyebrow,
 .stamp {
   font-family: "IBM Plex Mono", monospace;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 11px;
-  color: var(--brass);
-  margin: 0 0 8px;
+  letter-spacing: 0.28em;
+  font-size: 10px;
+  color: var(--red);
+  margin: 0 0 10px;
 }
 
 .top {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 28px;
+  gap: 32px;
   align-items: end;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 24px;
-  margin-bottom: 28px;
+  padding: 8px 0 28px;
+  margin-bottom: 32px;
 }
 
 .promise {
-  max-width: 42ch;
+  max-width: 38ch;
   color: var(--mute);
   margin: 0;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 nav {
   display: flex;
-  gap: 8px;
+  gap: 4px;
 }
 
 .desk {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.2fr);
-  gap: 20px;
+  grid-template-columns: minmax(280px, 0.88fr) minmax(320px, 1.22fr);
+  gap: 16px;
 }
 
 section.ticket,
 section.hunt,
 .stack {
-  background: linear-gradient(180deg, var(--panel) 0%, #15120f 100%);
+  background: rgba(7, 7, 7, 0.92);
   border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  padding: 24px;
 }
 
 .ticket {
-  background:
-    repeating-linear-gradient(
-      -12deg,
-      transparent,
-      transparent 18px,
-      rgba(215, 176, 122, 0.03) 18px,
-      rgba(215, 176, 122, 0.03) 19px
-    ),
-    linear-gradient(180deg, #221c16 0%, #15120f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket::after {
+  content: "";
+  position: absolute;
+  right: -70px;
+  top: -90px;
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(225, 29, 42, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .code {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: clamp(40px, 7vw, 72px);
-  margin: 8px 0 0;
-  color: var(--cream);
-  letter-spacing: 0.04em;
+  font-family: Syne, sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 7vw, 78px);
+  margin: 4px 0 0;
+  color: var(--white);
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  line-height: 0.9;
 }
 
 .meta,
@@ -132,8 +178,10 @@ label,
 legend {
   display: grid;
   gap: 6px;
-  font-size: 12px;
-  color: var(--mute);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 input,
@@ -144,17 +192,29 @@ button {
 
 input,
 select {
-  background: var(--panel-2);
-  color: var(--cream);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px 12px;
+  background: #050505;
+  color: var(--white);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 11px 12px;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #fff;
+  background: #000;
+}
+
+input::placeholder {
+  color: #3a3a3a;
 }
 
 fieldset {
-  border: 1px dashed var(--line);
-  border-radius: 12px;
-  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 14px;
   display: grid;
   gap: 8px;
 }
@@ -163,8 +223,14 @@ fieldset {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--cream);
+  color: var(--white);
   font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.check input {
+  accent-color: var(--red);
 }
 
 .row {
@@ -181,49 +247,90 @@ fieldset {
 button,
 a.ghost {
   border: 0;
-  border-radius: 999px;
-  padding: 11px 16px;
+  border-radius: 2px;
+  padding: 12px 16px;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 button.primary {
-  background: var(--brass);
-  color: var(--ink);
+  background: #fff;
+  color: #000;
   font-weight: 600;
+}
+
+button.primary:hover {
+  background: var(--red);
+  color: #fff;
 }
 
 button.ghost,
 a.ghost {
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
+  color: var(--white);
+}
+
+button.ghost:hover,
+a.ghost:hover {
+  border-color: #fff;
 }
 
 button.text {
   background: transparent;
-  color: var(--brass);
+  color: var(--mute);
   padding: 8px 10px;
+  position: relative;
+}
+
+button.text:hover,
+button.text.active {
+  color: #fff;
+}
+
+button.text.active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 2px;
+  height: 1px;
+  background: var(--red);
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: wait;
 }
 
 .results {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   margin-top: 14px;
 }
 
 .card {
-  background: #14110e;
+  background: #050505;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
+  border-left: 2px solid #2a2a2a;
+  border-radius: 2px;
+  padding: 16px;
   display: grid;
   gap: 8px;
+}
+
+.card:has(.badge.hot) {
+  border-left-color: var(--hot);
+}
+
+.card:has(.badge.warm) {
+  border-left-color: #fff;
 }
 
 .card header {
@@ -235,28 +342,34 @@ button:disabled {
 
 .card h3 {
   margin: 0;
-  font-size: 18px;
+  font-family: Syne, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: none;
   color: #fff;
 }
 
 .badge {
   font-family: "IBM Plex Mono", monospace;
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  border-radius: 999px;
-  padding: 4px 8px;
-  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--line-strong);
+  color: var(--mute);
 }
 
 .badge.hot {
-  color: var(--ember);
-  border-color: var(--ember);
+  color: var(--hot);
+  border-color: var(--hot);
+  background: rgba(255, 45, 45, 0.08);
 }
 
 .badge.warm {
-  color: var(--brass);
-  border-color: var(--brass);
+  color: #fff;
+  border-color: #fff;
 }
 
 .facts {
@@ -275,15 +388,15 @@ button:disabled {
 }
 
 a.phone {
-  color: var(--brass);
+  color: #fff;
   font-family: "IBM Plex Mono", monospace;
   font-size: 16px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-decoration: none;
 }
 
 a.phone:hover {
-  text-decoration: underline;
+  color: var(--red);
 }
 
 .links {
@@ -295,10 +408,18 @@ a.phone:hover {
 .links a,
 .links button,
 .card button {
-  font-size: 12px;
+  font-size: 11px;
   background: transparent;
-  border: 1px solid var(--line);
-  color: var(--cream);
+  border: 1px solid var(--line-strong);
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.links a:hover,
+.links button:hover,
+.card button:hover {
+  border-color: #fff;
 }
 
 .summary {
@@ -310,9 +431,11 @@ a.phone:hover {
 .summary span {
   font-family: "IBM Plex Mono", monospace;
   font-size: 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
   padding: 6px 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .used-list {
@@ -325,21 +448,23 @@ a.phone:hover {
   grid-template-columns: 120px 1fr auto;
   gap: 10px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 2px;
+  background: #050505;
 }
 
 .used-row strong {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: Syne, sans-serif;
   font-size: 22px;
-  color: var(--brass);
+  color: #fff;
+  letter-spacing: -0.04em;
 }
 
 .lock {
   position: fixed;
   inset: 0;
-  background: rgba(10, 8, 7, 0.92);
+  background: rgba(0, 0, 0, 0.96);
   display: grid;
   place-items: center;
   z-index: 20;
@@ -347,14 +472,23 @@ a.phone:hover {
 
 .lock-card {
   width: min(420px, 92vw);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 28px;
+  background: #050505;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 32px;
+}
+
+.lock-card p {
+  color: var(--mute);
 }
 
 .error {
-  color: var(--ember);
+  color: var(--hot);
+}
+
+::selection {
+  background: var(--red);
+  color: #fff;
 }
 
 .hidden {
@@ -369,5 +503,8 @@ a.phone:hover {
   }
   nav {
     flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 56px;
   }
 }
