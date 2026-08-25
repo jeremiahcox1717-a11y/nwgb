@@ -147,8 +147,10 @@ export async function enrichWithGoogleWeb(leads, town, onProgress, limit = 10) {
 export async function lookupPublicPhone(lead, town) {
   const place = town || lead.postcode || "";
   const results = await duckSearch(`"${lead.name}" ${place} (phone OR tel OR telephone)`);
+  if (!results.length) return { phone: null, searched: false };
+
   const fromSnippets = phoneFromSearchResults(results);
-  if (fromSnippets) return fromSnippets;
+  if (fromSnippets) return { phone: fromSnippets, searched: true };
 
   const skipHost = /google\.|gstatic\.|facebook\.|instagram\.|tiktok\.|youtube\.|duckduckgo\.|bing\.com|x\.com|twitter\./i;
   const pages = (results || [])
@@ -168,27 +170,41 @@ export async function lookupPublicPhone(lead, town) {
       });
       if (!res.ok) continue;
       const phone = phonesFromHtml(res.text);
-      if (phone) return phone;
+      if (phone) return { phone, searched: true };
     } catch {
       // Try the next public page.
     }
   }
-  return null;
+  return { phone: null, searched: true };
 }
 
-export async function fillMissingPhones(leads, town, onProgress, limit = 10) {
+export async function fillMissingPhones(leads, town, onProgress) {
   sharePhonesByName(leads);
-  const missing = leads.filter((lead) => !lead.phone).slice(0, limit);
+  const missing = leads.filter((lead) => !lead.phone);
+  let emptyEngine = 0;
   for (let i = 0; i < missing.length; i += 1) {
     const lead = missing[i];
     onProgress?.(`Looking up a public phone for ${lead.name} (${i + 1}/${missing.length})`);
     try {
-      const phone = await lookupPublicPhone(lead, town);
-      if (phone) lead.phone = phone;
+      const { phone, searched } = await lookupPublicPhone(lead, town);
+      if (phone) {
+        lead.phone = phone;
+        emptyEngine = 0;
+      } else if (!searched) {
+        emptyEngine += 1;
+      } else {
+        emptyEngine = 0;
+      }
     } catch {
-      // Leave blank when nothing public is listed.
+      emptyEngine += 1;
     }
-    await sleep(450);
+    if (emptyEngine >= 4) {
+      onProgress?.(
+        "Public web search is not answering from this machine. Showing numbers already listed on the map.",
+      );
+      break;
+    }
+    await sleep(250);
   }
   sharePhonesByName(leads);
   return leads;
