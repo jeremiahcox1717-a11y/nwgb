@@ -1,0 +1,18 @@
+{
+  "name": "nwgb",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Jordan's private desk for finding businesses with no website, no Google profile, and Instagram shops with nothing to book.",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
