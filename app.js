@@ -16,6 +16,7 @@ const state = {
   me: null,
   ticket: null,
   leads: [],
+  cityOptions: [],
 };
 
 const $ = (id) => document.getElementById(id);
@@ -70,7 +71,10 @@ function fillSelect(id, items, placeholder, current) {
 }
 
 function fillContinents() {
-  fillSelect("continent", unique(places().map((row) => row.continent)), "Pick continent", $("continent").value);
+  const names = state.me?.continents?.length
+    ? state.me.continents
+    : unique(places().map((row) => row.continent));
+  fillSelect("continent", names, "Pick continent", $("continent").value);
 }
 
 function languagesFor(continent) {
@@ -89,15 +93,42 @@ function countriesFor(continent, language) {
     .map((row) => ({ name: row.country, code: row.countryCode }));
 }
 
+function continentNames() {
+  if (state.me?.continents?.length) return state.me.continents;
+  return unique(places().map((row) => row.continent));
+}
+
+function setCities(cities, current) {
+  state.cityOptions = cities || [];
+  if ($("city-search")) {
+    $("city-search").value = "";
+    $("city-search").disabled = state.cityOptions.length === 0;
+  }
+  renderCities(current || "");
+}
+
+function renderCities(current) {
+  const selected = current || $("city")?.value || "";
+  const needle = ($("city-search")?.value || "").trim().toLowerCase();
+  let matches = needle
+    ? state.cityOptions.filter((name) => name.toLowerCase().includes(needle))
+    : state.cityOptions.slice();
+  if (selected && state.cityOptions.includes(selected) && !matches.includes(selected)) {
+    matches = [selected, ...matches];
+  }
+  fillSelect("city", matches, matches.length ? "Pick city" : needle ? "No cities match" : "Pick city", selected);
+  if ($("city")) $("city").disabled = state.cityOptions.length === 0;
+}
+
 function restoreCascade(settings) {
   const continent = settings.continent || "";
   const language = settings.language || "";
   const country = settings.country || "";
   const city = settings.city || settings.town || settings.metro || "";
-  fillSelect("continent", unique(places().map((row) => row.continent)), "Pick continent", continent);
+  fillSelect("continent", continentNames(), "Pick continent", continent);
   fillSelect("language", continent ? languagesFor(continent) : [], "Pick language", language);
   fillSelect("country", continent && language ? countriesFor(continent, language) : [], "Pick country", country);
-  fillSelect("city", country ? citiesFor({ continent, language, country }) : [], "Pick city", city);
+  setCities(country ? citiesFor({ continent, language, country }) : [], city);
   syncGiveButton();
   refreshRemaining();
 }
@@ -109,12 +140,12 @@ function onCascadeChange(level) {
   if (level === "continent") {
     fillSelect("language", languagesFor(continent), "Pick language", "");
     fillSelect("country", [], "Pick country", "");
-    fillSelect("city", [], "Pick city", "");
+    setCities([], "");
   } else if (level === "language") {
     fillSelect("country", countriesFor(continent, language), "Pick country", "");
-    fillSelect("city", [], "Pick city", "");
+    setCities([], "");
   } else if (level === "country") {
-    fillSelect("city", country ? citiesFor({ continent, language, country }) : [], "Pick city", "");
+    setCities(country ? citiesFor({ continent, language, country }) : [], "");
   }
   state.ticket = null;
   $("ticket-code").textContent = "—";
@@ -446,11 +477,16 @@ async function boot() {
 }
 
 async function start() {
-  const saved = sessionStorage.getItem("nwgb-pin") || "";
-  if (saved && (await pinMatches(saved))) {
-    $("lock").classList.add("hidden");
-    await boot();
-    return;
+  try {
+    const saved = sessionStorage.getItem("nwgb-pin") || "";
+    if (saved && (await pinMatches(saved))) {
+      $("lock").classList.add("hidden");
+      await boot();
+      return;
+    }
+  } catch (err) {
+    $("lock-error").textContent = err.message || "Could not unlock.";
+    $("lock-error").classList.remove("hidden");
   }
   $("lock").classList.remove("hidden");
 }

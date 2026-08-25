@@ -22,6 +22,7 @@ export async function initData() {
     loadJson("uk-outcodes.json"),
     loadJson("us-metros.json"),
     loadJson("chains.json"),
+    loadJson("world-places.json"),
   ]);
 }
 

@@ -279,6 +279,23 @@ form,
   gap: 12px;
 }
 
+.city-picker #city {
+  height: 176px;
+  min-height: 176px;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.city-picker #city option {
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.city-picker #city-search:disabled,
+.city-picker #city:disabled {
+  opacity: 0.45;
+}
+
 label,
 legend {
   display: grid;

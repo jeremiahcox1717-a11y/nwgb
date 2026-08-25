@@ -2,13 +2,9 @@ import { compactPostcode, outcodeFrom } from "./classify.js";
 import { dataFile } from "./data-files.js";
 import { getStore, updateStore } from "./store.js";
 
-export const PLACE_INDEX = [
-  { continent: "Europe", language: "English", country: "United Kingdom", countryCode: "GB", nation: "" },
-  { continent: "Europe", language: "Welsh", country: "United Kingdom", countryCode: "GB", nation: "Wales" },
-  { continent: "Europe", language: "Irish", country: "United Kingdom", countryCode: "GB", nation: "Northern Ireland" },
-  { continent: "Europe", language: "Scottish Gaelic", country: "United Kingdom", countryCode: "GB", nation: "Scotland" },
-  { continent: "North America", language: "English", country: "United States", countryCode: "US", nation: "" },
-];
+export function worldPlaces() {
+  return dataFile("world-places.json");
+}
 
 export function ukOutcodes() {
   return dataFile("uk-outcodes.json");
@@ -30,46 +26,84 @@ export function ukTowns() {
 }
 
 export function placeCatalog() {
+  const world = worldPlaces();
+  const places = [];
+  for (const country of world.countries) {
+    for (const language of country.languages) {
+      places.push({
+        continent: country.continent,
+        language,
+        country: country.name,
+        countryCode: country.code,
+        nation: "",
+      });
+    }
+  }
   return {
-    continents: [...new Set(PLACE_INDEX.map((row) => row.continent))],
-    places: PLACE_INDEX,
+    continents: world.continents,
+    places,
   };
 }
 
-export function matchPlace(filters = {}) {
+export function findCountry(filters = {}) {
+  const code = String(filters.country || "").trim();
   const continent = String(filters.continent || "").trim();
   const language = String(filters.language || "").trim();
-  const country = String(filters.country || "").trim();
   return (
-    PLACE_INDEX.find((row) => {
+    worldPlaces().countries.find((row) => {
+      if (code && row.code !== code && row.name !== code) return false;
       if (continent && row.continent !== continent) return false;
-      if (language && row.language !== language) return false;
-      if (country && row.countryCode !== country && row.country !== country) return false;
-      return continent || language || country;
-    }) || null
+      if (language && !row.languages.includes(language)) return false;
+      return Boolean(code || continent);
+    }) ||
+    worldPlaces().countries.find((row) => row.code === code) ||
+    null
   );
 }
 
+export function matchPlace(filters = {}) {
+  const country = findCountry(filters);
+  if (!country) return null;
+  const language = String(filters.language || "").trim() || country.languages[0] || "";
+  return {
+    continent: country.continent,
+    language,
+    country: country.name,
+    countryCode: country.code,
+    nation: nationForLanguage(country.code, language),
+  };
+}
+
+function nationForLanguage(countryCode, language) {
+  if (countryCode !== "GB") return "";
+  if (language === "Welsh") return "Wales";
+  if (language === "Irish") return "Northern Ireland";
+  if (language === "Scottish Gaelic") return "Scotland";
+  return "";
+}
+
 export function countriesFor(continent, language) {
-  return PLACE_INDEX.filter((row) => {
-    if (continent && row.continent !== continent) return false;
-    if (language && row.language !== language) return false;
-    return true;
-  }).map((row) => ({ name: row.country, code: row.countryCode }));
+  return worldPlaces()
+    .countries.filter((row) => {
+      if (continent && row.continent !== continent) return false;
+      if (language && !row.languages.includes(language)) return false;
+      return true;
+    })
+    .map((row) => ({ name: row.name, code: row.code }));
 }
 
 export function citiesFor(filters = {}) {
-  const place = matchPlace(filters);
-  const country = filters.country || place?.countryCode || "";
-  if (country === "US") return usMetros().map((metro) => metro.name);
-  if (country === "GB") {
+  const country = findCountry(filters);
+  if (!country) return [];
+  if (country.code === "US") return usMetros().map((metro) => metro.name);
+  if (country.code === "GB") {
     const names = new Set();
-    for (const row of filterUk({ nation: place?.nation || "", city: "" })) {
+    for (const row of filterUk({ nation: nationForLanguage("GB", filters.language), city: "" })) {
       if (row.town) names.add(row.town);
     }
     return [...names].sort((a, b) => a.localeCompare(b));
   }
-  return [];
+  return [...(country.cities || [])].sort((a, b) => a.localeCompare(b));
 }
 
 function padZip(n) {
@@ -166,30 +200,47 @@ export function nextPostcode(filters = {}) {
     );
   }
 
-  const pool = filterUk({ nation: place?.nation || "", city });
-  const unused = pool.filter((row) => !used.has(compactPostcode(row.code)));
-  if (!unused.length) {
+  if (country === "GB") {
+    const pool = filterUk({ nation: place?.nation || "", city });
+    const unused = pool.filter((row) => !used.has(compactPostcode(row.code)));
+    if (!unused.length) {
+      return {
+        exhausted: true,
+        remaining: 0,
+        message: "Every postcode in that city has already been given. Pick another city or restore one.",
+      };
+    }
+    const row = unused[0];
+    return stampGiven(
+      {
+        code: row.code,
+        compact: compactPostcode(row.code),
+        country: "GB",
+        town: row.town,
+        region: row.region,
+        nation: row.nation,
+        lat: row.lat,
+        lon: row.lon,
+      },
+      unused.length - 1,
+      { ...filters, country, city },
+    );
+  }
+
+  const record = findCountry({ ...filters, country });
+  const listed = (record?.cities || []).some((name) => name.toLowerCase() === city.toLowerCase());
+  if (!listed) {
     return {
       exhausted: true,
       remaining: 0,
-      message: "Every postcode in that city has already been given. Pick another city or restore one.",
+      message: "Pick a city in that country.",
     };
   }
-  const row = unused[0];
-  return stampGiven(
-    {
-      code: row.code,
-      compact: compactPostcode(row.code),
-      country: "GB",
-      town: row.town,
-      region: row.region,
-      nation: row.nation,
-      lat: row.lat,
-      lon: row.lon,
-    },
-    unused.length - 1,
-    { ...filters, country, city },
-  );
+  return {
+    exhausted: true,
+    remaining: 0,
+    message: `No stored postcodes for ${city} yet. Paste a local postcode into Hunt.`,
+  };
 }
 
 function stampGiven(ticket, remaining, filters = {}) {
@@ -274,6 +325,9 @@ export function remainingCount(filters = {}) {
     const { codes } = usSequence(city);
     return codes.filter((item) => !used.has(item)).length;
   }
-  const place = matchPlace(filters);
-  return filterUk({ nation: place?.nation || "", city }).filter((row) => !used.has(compactPostcode(row.code))).length;
+  if (country === "GB") {
+    const place = matchPlace(filters);
+    return filterUk({ nation: place?.nation || "", city }).filter((row) => !used.has(compactPostcode(row.code))).length;
+  }
+  return 0;
 }
