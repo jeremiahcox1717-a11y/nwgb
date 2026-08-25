@@ -322,6 +322,11 @@ $("lock-form").addEventListener("submit", async (e) => {
 });
 
 async function boot() {
+  if (location.protocol === "file:") {
+    $("hunt-status").textContent =
+      "This file is not the website. Double-click start.bat (Windows) or start.command (Mac), then open http://localhost:3000.";
+    return;
+  }
   try {
     const me = await api("/api/me");
     fillMe(me);

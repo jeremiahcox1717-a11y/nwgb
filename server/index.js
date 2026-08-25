@@ -223,7 +223,11 @@ app.use((req, res, next) => {
 });
 
 const server = app.listen(PORT, "0.0.0.0", () => {
-  console.log(`NWGB desk on http://localhost:${PORT}`);
+  console.log("");
+  console.log("NWGB desk is running.");
+  console.log(`Open this in your browser:  http://localhost:${PORT}`);
+  console.log("Leave this window open while you use it.");
+  console.log("");
 });
 
 export { app, server };

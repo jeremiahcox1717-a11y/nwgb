@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: nwgb-desk
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: OWNER_NAME
+        value: Jordan
+      - key: APP_PIN
+        generateValue: true
+      - key: NODE_ENV
+        value: production
