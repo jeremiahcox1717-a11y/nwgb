@@ -106,6 +106,16 @@ function modes() {
   return [...document.querySelectorAll("input[name=mode]:checked")].map((el) => el.value);
 }
 
+function telHref(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("00")) return `tel:+${digits.slice(2)}`;
+  if (digits.startsWith("44")) return `tel:+${digits}`;
+  if (digits.startsWith("1") && digits.length === 11) return `tel:+${digits}`;
+  if (digits.startsWith("0")) return `tel:+44${digits.slice(1)}`;
+  return `tel:${digits}`;
+}
+
 function card(lead, saved) {
   const el = document.createElement("article");
   el.className = "card";
@@ -130,8 +140,15 @@ function card(lead, saved) {
       <span class="badge ${lead.score}">${lead.score}</span>
     </header>
     <p class="facts">${escapeHtml(lead.address || lead.snippet || "")}</p>
+    ${
+      lead.phone
+        ? `<p class="phone-row">
+            <a class="phone" href="${telHref(lead.phone)}">${escapeHtml(lead.phone)}</a>
+            <button type="button" class="text" data-copy-phone="1">Copy</button>
+          </p>`
+        : ""
+    }
     <p class="facts">
-      ${lead.phone ? `<span>${escapeHtml(lead.phone)}</span>` : ""}
       ${lead.instagram ? `<span>@${escapeHtml((lead.instagram.split("/").pop() || "").replace(/^@/, ""))}</span>` : ""}
       ${lead.website ? `<span>site: ${escapeHtml(lead.website)}</span>` : "<span>no website</span>"}
       ${lead.booking ? `<span>booking: ${escapeHtml(lead.booking)}</span>` : ""}
@@ -144,6 +161,14 @@ function card(lead, saved) {
       ${saved ? `<button data-status="contacted">Contacted</button><button data-delete="1">Drop</button>` : `<button data-save="1">Save lead</button>`}
     </div>
   `;
+  el.querySelector("[data-copy-phone]")?.addEventListener("click", async (event) => {
+    try {
+      await navigator.clipboard.writeText(lead.phone);
+      event.currentTarget.textContent = "Copied";
+    } catch {
+      event.currentTarget.textContent = lead.phone;
+    }
+  });
   el.querySelector("[data-save]")?.addEventListener("click", () => saveLeads([lead]));
   el.querySelector("[data-status]")?.addEventListener("click", async () => {
     await api(`/api/leads/${encodeURIComponent(lead.id)}`, {

@@ -5,6 +5,7 @@ import {
   isChainName,
   scoreLead,
 } from "./classify.js";
+import { phoneFromOsmTags } from "./phone.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -124,7 +125,7 @@ export async function huntOsm({ lat, lon, radius, town, postcode, niche }) {
       name,
       category: categoryFromTags(tags),
       address,
-      phone: tags.phone || tags["contact:phone"] || tags["contact:mobile"] || null,
+      phone: phoneFromOsmTags(tags),
       email: tags.email || tags["contact:email"] || null,
       postcode: tags["addr:postcode"] || postcode,
       lat: point.lat,
