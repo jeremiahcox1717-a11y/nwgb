@@ -54,50 +54,45 @@
       <main id="panel-desk" class="desk">
         <section class="ticket">
           <p class="stamp">Next unused</p>
-          <p class="meta" id="ticket-place">Set a filter, then take a code.</p>
+          <p class="meta" id="ticket-place">Pick continent, language, country, then city.</p>
           <p class="code" id="ticket-code">—</p>
-          <p class="remain" id="ticket-remain">— left in this filter</p>
+          <p class="remain" id="ticket-remain">Pick a city to see codes left</p>
           <div class="filters">
             <label>
+              Continent
+              <select id="continent">
+                <option value="">Pick continent</option>
+              </select>
+            </label>
+            <label>
+              Language
+              <select id="language" disabled>
+                <option value="">Pick language</option>
+              </select>
+            </label>
+            <label>
               Country
-              <select id="country">
-                <option value="GB">United Kingdom</option>
-                <option value="US">United States</option>
+              <select id="country" disabled>
+                <option value="">Pick country</option>
               </select>
             </label>
-            <label id="nation-wrap">
-              Nation
-              <select id="nation">
-                <option value="England">England</option>
-                <option value="Scotland">Scotland</option>
-                <option value="Wales">Wales</option>
-                <option value="Northern Ireland">Northern Ireland</option>
-                <option value="all">All UK</option>
+            <label>
+              City
+              <select id="city" disabled>
+                <option value="">Pick city</option>
               </select>
-            </label>
-            <label id="town-wrap">
-              Town
-              <input id="town" list="towns" placeholder="optional, e.g. Manchester" />
-              <datalist id="towns"></datalist>
-            </label>
-            <label id="area-wrap">
-              Area letters
-              <input id="area" placeholder="optional, e.g. M or SW" maxlength="4" />
-            </label>
-            <label id="metro-wrap" class="hidden">
-              Metro
-              <select id="metro"></select>
             </label>
           </div>
           <div class="row">
-            <button id="give" class="primary">Give me the next postcode</button>
+            <button id="give" class="primary" disabled>Give me the next postcode</button>
             <button id="hunt-ticket" class="ghost">Hunt this one</button>
           </div>
           <div class="row slim">
             <button id="undo" class="text">Undo last given</button>
           </div>
           <p class="hint">
-            Once a code is given, it is burnt. Use it, then take the next. Undo only if you hit the button by accident.
+            Continent and language unlock countries. A country unlocks cities. A city unlocks unused postcodes.
+            Once a code is given, it is burnt. Undo only if you hit the button by accident.
           </p>
         </section>
 
