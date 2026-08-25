@@ -40,33 +40,106 @@ function showPanel(name) {
 function fillMe(me) {
   state.me = me;
   $("greeting").textContent = `${me.ownerName}'s private desk`;
-  $("country").value = me.settings.country || "GB";
-  $("nation").value = me.settings.nation || "England";
-  $("town").value = me.settings.town || "";
-  $("area").value = me.settings.area || "";
-  $("towns").innerHTML = me.towns.map((t) => `<option value="${t.town}"></option>`).join("");
-  $("metro").innerHTML = me.metros.map((name) => `<option>${name}</option>`).join("");
-  if (me.settings.metro) $("metro").value = me.settings.metro;
-  $("ticket-remain").textContent = `${me.remaining} left in this filter`;
-  toggleCountry();
+  fillContinents();
+  restoreCascade(me.settings || {});
   if (me.pinRequired && !state.pin) $("lock").classList.remove("hidden");
 }
 
-function toggleCountry() {
-  const us = $("country").value === "US";
-  $("nation-wrap").classList.toggle("hidden", us);
-  $("town-wrap").classList.toggle("hidden", us);
-  $("area-wrap").classList.toggle("hidden", us);
-  $("metro-wrap").classList.toggle("hidden", !us);
+function places() {
+  return state.me?.places || [];
+}
+
+function unique(values) {
+  return [...new Set(values)];
+}
+
+function fillSelect(id, items, placeholder, current) {
+  const el = $(id);
+  const options = items.map((item) => {
+    if (typeof item === "string") return { value: item, label: item };
+    return { value: item.code, label: item.name };
+  });
+  el.innerHTML = `<option value="">${placeholder}</option>${options
+    .map((item) => `<option value="${escapeHtml(item.value)}">${escapeHtml(item.label)}</option>`)
+    .join("")}`;
+  el.disabled = items.length === 0;
+  if (current && options.some((item) => item.value === current)) el.value = current;
+}
+
+function fillContinents() {
+  fillSelect("continent", unique(places().map((row) => row.continent)), "Pick continent", $("continent").value);
+}
+
+function languagesFor(continent) {
+  return unique(places().filter((row) => row.continent === continent).map((row) => row.language));
+}
+
+function countriesFor(continent, language) {
+  const seen = new Set();
+  return places()
+    .filter((row) => row.continent === continent && row.language === language)
+    .filter((row) => {
+      if (seen.has(row.countryCode)) return false;
+      seen.add(row.countryCode);
+      return true;
+    })
+    .map((row) => ({ name: row.country, code: row.countryCode }));
+}
+
+async function restoreCascade(settings) {
+  const continent = settings.continent || "";
+  const language = settings.language || "";
+  const country = settings.country || "";
+  const city = settings.city || settings.town || settings.metro || "";
+  fillSelect("continent", unique(places().map((row) => row.continent)), "Pick continent", continent);
+  fillSelect("language", continent ? languagesFor(continent) : [], "Pick language", language);
+  fillSelect("country", continent && language ? countriesFor(continent, language) : [], "Pick country", country);
+  if (country) {
+    const data = await api(`/api/places/cities?${query({ continent, language, country })}`);
+    fillSelect("city", data.cities || [], "Pick city", city);
+  } else {
+    fillSelect("city", [], "Pick city", "");
+  }
+  syncGiveButton();
+  await refreshRemaining();
+}
+
+async function onCascadeChange(level) {
+  const continent = $("continent").value;
+  const language = level === "continent" ? "" : $("language").value;
+  const country = level === "continent" || level === "language" ? "" : $("country").value;
+  if (level === "continent") {
+    fillSelect("language", languagesFor(continent), "Pick language", "");
+    fillSelect("country", [], "Pick country", "");
+    fillSelect("city", [], "Pick city", "");
+  } else if (level === "language") {
+    fillSelect("country", countriesFor(continent, language), "Pick country", "");
+    fillSelect("city", [], "Pick city", "");
+  } else if (level === "country") {
+    if (country) {
+      const data = await api(`/api/places/cities?${query({ continent, language, country })}`);
+      fillSelect("city", data.cities || [], "Pick city", "");
+    } else {
+      fillSelect("city", [], "Pick city", "");
+    }
+  }
+  state.ticket = null;
+  $("ticket-code").textContent = "—";
+  $("ticket-place").textContent = "Pick continent, language, country, then city.";
+  syncGiveButton();
+  await refreshRemaining();
+}
+
+function syncGiveButton() {
+  $("give").disabled = !$("city").value;
 }
 
 function filters() {
   return {
+    continent: $("continent").value,
+    language: $("language").value,
     country: $("country").value,
-    nation: $("nation").value,
-    town: $("town").value.trim(),
-    area: $("area").value.trim(),
-    metro: $("metro").value,
+    city: $("city").value,
   };
 }
 
@@ -84,8 +157,8 @@ function setTicket(ticket) {
   }
   if (!ticket?.code) return;
   $("ticket-code").textContent = ticket.code;
-  $("ticket-place").textContent = [ticket.town, ticket.region, ticket.nation].filter(Boolean).join(" · ");
-  $("ticket-remain").textContent = `${ticket.remaining} left in this filter`;
+  $("ticket-place").textContent = [ticket.town, ticket.nation].filter(Boolean).join(" · ");
+  $("ticket-remain").textContent = `${ticket.remaining} left in this city`;
   $("hunt-postcode").value = ticket.code;
 }
 
@@ -101,8 +174,12 @@ async function giveNext() {
 }
 
 async function refreshRemaining() {
+  if (!$("city").value) {
+    $("ticket-remain").textContent = "Pick a city to see codes left";
+    return;
+  }
   const data = await api(`/api/postcodes/remaining?${query(filters())}`);
-  if (!state.ticket) $("ticket-remain").textContent = `${data.remaining} left in this filter`;
+  if (!state.ticket) $("ticket-remain").textContent = `${data.remaining} left in this city`;
 }
 
 function modes() {
@@ -291,7 +368,7 @@ async function loadUsed() {
     el.className = "used-row";
     el.innerHTML = `
       <strong>${escapeHtml(row.code)}</strong>
-      <span>${escapeHtml([row.town, row.nation, row.givenAt?.slice(0, 10)].filter(Boolean).join(" · "))}</span>
+      <span>${escapeHtml([row.town, row.nation || row.country, row.givenAt?.slice(0, 10)].filter(Boolean).join(" · "))}</span>
       <button class="text">Restore</button>
     `;
     el.querySelector("button").addEventListener("click", async () => {
@@ -310,13 +387,10 @@ document.querySelectorAll("nav [data-panel]").forEach((btn) => {
   btn.addEventListener("click", () => showPanel(btn.dataset.panel));
 });
 
-$("country").addEventListener("change", () => {
-  toggleCountry();
-  refreshRemaining();
-});
-["nation", "town", "area", "metro"].forEach((id) => {
-  $(id).addEventListener("change", refreshRemaining);
-});
+$("continent").addEventListener("change", () => onCascadeChange("continent"));
+$("language").addEventListener("change", () => onCascadeChange("language"));
+$("country").addEventListener("change", () => onCascadeChange("country"));
+$("city").addEventListener("change", () => onCascadeChange("city"));
 
 $("give").addEventListener("click", giveNext);
 $("hunt-ticket").addEventListener("click", () => {

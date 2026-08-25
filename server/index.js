@@ -8,9 +8,9 @@ import {
   undoLastGiven,
   restoreGiven,
   remainingCount,
-  ukTowns,
-  usMetros,
   markGiven,
+  placeCatalog,
+  citiesFor,
 } from "./postcodes.js";
 import { huntSse, runHunt } from "./hunt.js";
 
@@ -63,8 +63,17 @@ app.get("/api/me", (_req, res) => {
     givenCount: store.given.length,
     leadCount: store.leads.length,
     remaining: remainingCount(store.settings),
-    towns: ukTowns().slice(0, 80),
-    metros: usMetros().map((m) => m.name),
+    ...placeCatalog(),
+  });
+});
+
+app.get("/api/places/cities", (req, res) => {
+  res.json({
+    cities: citiesFor({
+      continent: req.query.continent || "",
+      language: req.query.language || "",
+      country: req.query.country || "",
+    }),
   });
 });
 
@@ -86,11 +95,10 @@ app.post("/api/settings", (req, res) => {
 app.get("/api/postcodes/next", (req, res) => {
   const store = getStore();
   const filters = {
-    country: req.query.country || store.settings.country || "GB",
-    nation: req.query.nation || store.settings.nation || "",
-    town: req.query.town || store.settings.town || "",
-    area: req.query.area || store.settings.area || "",
-    metro: req.query.metro || store.settings.metro || "",
+    continent: req.query.continent || store.settings.continent || "",
+    language: req.query.language || store.settings.language || "",
+    country: req.query.country || store.settings.country || "",
+    city: req.query.city || store.settings.city || "",
   };
   updateStore((current) => {
     current.settings = { ...current.settings, ...filters };
@@ -103,11 +111,10 @@ app.get("/api/postcodes/next", (req, res) => {
 app.get("/api/postcodes/remaining", (req, res) => {
   const store = getStore();
   const filters = {
-    country: req.query.country || store.settings.country || "GB",
-    nation: req.query.nation || store.settings.nation || "",
-    town: req.query.town || store.settings.town || "",
-    area: req.query.area || store.settings.area || "",
-    metro: req.query.metro || store.settings.metro || "",
+    continent: req.query.continent || store.settings.continent || "",
+    language: req.query.language || store.settings.language || "",
+    country: req.query.country || store.settings.country || "",
+    city: req.query.city || store.settings.city || "",
   };
   res.json({ remaining: remainingCount(filters) });
 });

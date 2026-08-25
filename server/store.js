@@ -15,10 +15,10 @@ function blank() {
     given: [],
     leads: [],
     settings: {
-      country: "GB",
-      nation: "England",
-      town: "",
-      area: "",
+      continent: "",
+      language: "",
+      country: "",
+      city: "",
       radiusMeters: 1600,
     },
   };

@@ -21,31 +21,60 @@ after(() => {
   }
 });
 
+test("place cascade fills countries cities and postcodes", () => {
+  const europeEnglish = postcodes.countriesFor("Europe", "English");
+  assert.deepEqual(
+    europeEnglish.map((row) => row.code),
+    ["GB"],
+  );
+  const us = postcodes.countriesFor("North America", "English");
+  assert.deepEqual(
+    us.map((row) => row.code),
+    ["US"],
+  );
+  const manchester = postcodes.citiesFor({ continent: "Europe", language: "English", country: "GB" });
+  assert.ok(manchester.includes("Manchester"));
+  const wales = postcodes.citiesFor({ continent: "Europe", language: "Welsh", country: "GB" });
+  assert.ok(wales.includes("Aberdare"));
+  assert.equal(wales.includes("Manchester"), false);
+  const before = postcodes.nextPostcode({ continent: "Europe", language: "English", country: "GB" });
+  assert.equal(before.exhausted, true);
+  const ticket = postcodes.nextPostcode({
+    continent: "Europe",
+    language: "English",
+    country: "GB",
+    city: "Manchester",
+  });
+  assert.ok(ticket.code);
+  assert.equal(ticket.town, "Manchester");
+});
+
 test("given postcodes never come out twice", () => {
-  const first = postcodes.nextPostcode({ country: "GB", nation: "England", town: "Manchester" });
+  const first = postcodes.nextPostcode({ country: "GB", city: "Manchester" });
   assert.ok(first.code);
   assert.equal(first.exhausted, false);
-  const second = postcodes.nextPostcode({ country: "GB", nation: "England", town: "Manchester" });
+  const second = postcodes.nextPostcode({ country: "GB", city: "Manchester" });
   assert.notEqual(second.code, first.code);
   const used = new Set(postcodes.givenSet());
   assert.ok(used.has(first.compact));
   assert.ok(used.has(second.compact));
-  const third = postcodes.nextPostcode({ country: "GB", nation: "England", town: "Manchester" });
+  const third = postcodes.nextPostcode({ country: "GB", city: "Manchester" });
   assert.notEqual(third.code, first.code);
   assert.notEqual(third.code, second.code);
 });
 
 test("undo puts a code back into the machine", () => {
-  const ticket = postcodes.nextPostcode({ country: "GB", nation: "England", town: "Leeds" });
+  const ticket = postcodes.nextPostcode({ country: "GB", city: "Leeds" });
   const removed = postcodes.undoLastGiven();
   assert.equal(removed.code, ticket.code);
-  const again = postcodes.nextPostcode({ country: "GB", nation: "England", town: "Leeds" });
+  const again = postcodes.nextPostcode({ country: "GB", city: "Leeds" });
   assert.equal(again.code, ticket.code);
 });
 
 test("hunting a typed postcode burns it for the generator", () => {
-  postcodes.markGiven("SW1A");
-  const next = postcodes.nextPostcode({ country: "GB", area: "SW1A" });
+  const ticket = postcodes.nextPostcode({ country: "GB", city: "Milltimber" });
+  assert.ok(ticket.code);
+  const next = postcodes.nextPostcode({ country: "GB", city: "Milltimber" });
   assert.equal(next.exhausted, true);
 });
 

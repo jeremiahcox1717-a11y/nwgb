@@ -32,11 +32,12 @@ Without a Google key, hunts still run. OpenStreetMap supplies the street busines
 
 ## How to work a town
 
-1. Filter the ticket machine (England + Manchester, or area `M`, whatever you are sweeping).
-2. Hit **Give me the next postcode**. That code is now used.
-3. Hit **Hunt this one**.
-4. Save the hot and warm leads. Download CSV when you want them out of the desk.
-5. Take the next code. Repeat. Never twice.
+1. Pick **continent**, then **language**. That unlocks countries.
+2. Pick a **country**. That unlocks cities.
+3. Pick a **city**, then hit **Give me the next postcode**. That code is now used.
+4. Hit **Hunt this one**.
+5. Save the hot and warm leads. Download CSV when you want them out of the desk.
+6. Take the next code. Repeat. Never twice.
 
 If you mash the button by accident, **Undo last given**.
 
