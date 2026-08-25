@@ -23,6 +23,7 @@ function keepLead(lead, modes) {
     return wantIg && !lead.hasWebsite && !lead.hasBooking;
   }
   if (lead.hasWebsite) return false;
+  if (wantIg && lead.instagram && !lead.hasBooking) return true;
   if (wantGhost && lead.google === "none") return true;
   if (wantBlank && (lead.google === "blank" || lead.source === "google")) return true;
   if (wantNoSite) return true;
@@ -97,8 +98,16 @@ export async function runHunt({ postcode, modes, niche, radius, onEvent }) {
         niche: niche || "all",
       });
       all.push(...ig.leads);
-      onEvent("instagramQuery", { query: ig.query });
-      onEvent("status", { message: `Instagram net pulled ${ig.leads.length} handles.` });
+      onEvent("instagramQuery", {
+        query: ig.query,
+        googleUrl: `https://www.google.com/search?q=${encodeURIComponent(ig.query)}`,
+        bingUrl: `https://www.bing.com/search?q=${encodeURIComponent(ig.query)}`,
+      });
+      onEvent("status", {
+        message: ig.leads.length
+          ? `Instagram net pulled ${ig.leads.length} handles.`
+          : "Instagram search from this machine came back empty (search engines often hide that). Use the Google/Bing Instagram links under the hunt — that's the reliable way to pick shops with no site and no booking.",
+      });
     } catch (err) {
       onEvent("status", {
         message: `Instagram search was blocked or empty (${err.message}). Use the search links on each card.`,

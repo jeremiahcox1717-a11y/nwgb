@@ -235,7 +235,8 @@ button:disabled {
 
 .card h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
+  color: #fff;
 }
 
 .badge {
@@ -273,8 +274,12 @@ button:disabled {
 }
 
 .links a,
+.links button,
 .card button {
   font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--cream);
 }
 
 .summary {
@@ -298,7 +303,7 @@ button:disabled {
 
 .used-row {
   display: grid;
-  grid-template-columns: 90px 1fr auto;
+  grid-template-columns: 120px 1fr auto;
   gap: 10px;
   align-items: center;
   padding: 10px 12px;
@@ -308,6 +313,8 @@ button:disabled {
 
 .used-row strong {
   font-family: "IBM Plex Mono", monospace;
+  font-size: 22px;
+  color: var(--brass);
 }
 
 .lock {

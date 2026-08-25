@@ -141,7 +141,7 @@ function card(lead, saved) {
       ${lead.googleSearch ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.googleSearch}">Google</a>` : ""}
       ${lead.instagramSearch ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.instagramSearch}">Instagram</a>` : ""}
       ${lead.osmUrl ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.osmUrl}">OSM</a>` : ""}
-      ${saved ? `<button data-status="contacted">Contacted</button><button data-delete="1">Drop</button>` : `<button data-save="1">Save</button>`}
+      ${saved ? `<button data-status="contacted">Contacted</button><button data-delete="1">Drop</button>` : `<button data-save="1">Save lead</button>`}
     </div>
   `;
   el.querySelector("[data-save]")?.addEventListener("click", () => saveLeads([lead]));
@@ -195,6 +195,7 @@ function runHunt(postcode) {
   $("hunt-status").textContent = `Hunting ${postcode}…`;
   $("results").innerHTML = "";
   $("summary").classList.add("hidden");
+  $("ig-links").classList.add("hidden");
   const params = query({
     postcode,
     modes: modes().join(","),
@@ -204,8 +205,10 @@ function runHunt(postcode) {
   });
   const es = new EventSource(`/api/hunt/stream?${params}`);
   let finished = false;
-  es.addEventListener("status", (e) => {
-    $("hunt-status").textContent = JSON.parse(e.data).message;
+  es.addEventListener("instagramQuery", (e) => {
+    const data = JSON.parse(e.data);
+    $("ig-links").classList.remove("hidden");
+    $("ig-links").innerHTML = `Instagram hunt: <a class="ghost" target="_blank" rel="noreferrer" href="${data.googleUrl}">Google this query</a> <a class="ghost" target="_blank" rel="noreferrer" href="${data.bingUrl}">Bing</a> — open a profile, if the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
   });
   es.addEventListener("fail", (e) => {
     finished = true;
