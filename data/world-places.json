@@ -1,0 +1,2636 @@
+{
+  "continents": [
+    "Africa",
+    "Antarctica",
+    "Asia",
+    "Europe",
+    "North America",
+    "Oceania",
+    "South America"
+  ],
+  "countries": [
+    {
+      "continent": "Africa",
+      "name": "Algeria",
+      "code": "DZ",
+      "languages": [
+        "Arabic",
+        "French"
+      ],
+      "cities": [
+        "Algiers",
+        "Oran",
+        "Constantine",
+        "Annaba"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Angola",
+      "code": "AO",
+      "languages": [
+        "Portuguese"
+      ],
+      "cities": [
+        "Luanda",
+        "Huambo",
+        "Benguela",
+        "Lubango"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Benin",
+      "code": "BJ",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Cotonou",
+        "Porto-Novo",
+        "Parakou"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Botswana",
+      "code": "BW",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Gaborone",
+        "Francistown",
+        "Maun"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Burkina Faso",
+      "code": "BF",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Ouagadougou",
+        "Bobo-Dioulasso"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Burundi",
+      "code": "BI",
+      "languages": [
+        "French",
+        "English"
+      ],
+      "cities": [
+        "Gitega",
+        "Bujumbura"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Cameroon",
+      "code": "CM",
+      "languages": [
+        "French",
+        "English"
+      ],
+      "cities": [
+        "Yaoundé",
+        "Douala",
+        "Garoua",
+        "Bamenda"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Cape Verde",
+      "code": "CV",
+      "languages": [
+        "Portuguese"
+      ],
+      "cities": [
+        "Praia",
+        "Mindelo"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Central African Republic",
+      "code": "CF",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Bangui"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Chad",
+      "code": "TD",
+      "languages": [
+        "French",
+        "Arabic"
+      ],
+      "cities": [
+        "N'Djamena",
+        "Moundou"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Comoros",
+      "code": "KM",
+      "languages": [
+        "Arabic",
+        "French"
+      ],
+      "cities": [
+        "Moroni"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Congo",
+      "code": "CG",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Brazzaville",
+        "Pointe-Noire"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Côte d'Ivoire",
+      "code": "CI",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Abidjan",
+        "Yamoussoukro",
+        "Bouaké"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Democratic Republic of the Congo",
+      "code": "CD",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Kinshasa",
+        "Lubumbashi",
+        "Mbuji-Mayi",
+        "Kisangani"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Djibouti",
+      "code": "DJ",
+      "languages": [
+        "French",
+        "Arabic"
+      ],
+      "cities": [
+        "Djibouti"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Egypt",
+      "code": "EG",
+      "languages": [
+        "Arabic"
+      ],
+      "cities": [
+        "Cairo",
+        "Alexandria",
+        "Giza",
+        "Luxor",
+        "Aswan"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Equatorial Guinea",
+      "code": "GQ",
+      "languages": [
+        "Spanish",
+        "French",
+        "Portuguese"
+      ],
+      "cities": [
+        "Malabo",
+        "Bata"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Eritrea",
+      "code": "ER",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Asmara"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Eswatini",
+      "code": "SZ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Mbabane",
+        "Manzini"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Ethiopia",
+      "code": "ET",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Addis Ababa",
+        "Dire Dawa",
+        "Mekelle"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Gabon",
+      "code": "GA",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Libreville",
+        "Port-Gentil"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Gambia",
+      "code": "GM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Banjul",
+        "Serekunda"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Ghana",
+      "code": "GH",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Accra",
+        "Kumasi",
+        "Tamale",
+        "Cape Coast"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Guinea",
+      "code": "GN",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Conakry",
+        "Kankan"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Guinea-Bissau",
+      "code": "GW",
+      "languages": [
+        "Portuguese"
+      ],
+      "cities": [
+        "Bissau"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Kenya",
+      "code": "KE",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Nairobi",
+        "Mombasa",
+        "Kisumu",
+        "Nakuru"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Lesotho",
+      "code": "LS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Maseru"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Liberia",
+      "code": "LR",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Monrovia"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Libya",
+      "code": "LY",
+      "languages": [
+        "Arabic"
+      ],
+      "cities": [
+        "Tripoli",
+        "Benghazi",
+        "Misrata"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Madagascar",
+      "code": "MG",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Antananarivo",
+        "Toamasina"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Malawi",
+      "code": "MW",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Lilongwe",
+        "Blantyre"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Mali",
+      "code": "ML",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Bamako",
+        "Sikasso"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Mauritania",
+      "code": "MR",
+      "languages": [
+        "Arabic"
+      ],
+      "cities": [
+        "Nouakchott"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Mauritius",
+      "code": "MU",
+      "languages": [
+        "English",
+        "French"
+      ],
+      "cities": [
+        "Port Louis"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Morocco",
+      "code": "MA",
+      "languages": [
+        "Arabic",
+        "French"
+      ],
+      "cities": [
+        "Casablanca",
+        "Rabat",
+        "Marrakesh",
+        "Fes",
+        "Tangier"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Mozambique",
+      "code": "MZ",
+      "languages": [
+        "Portuguese"
+      ],
+      "cities": [
+        "Maputo",
+        "Beira",
+        "Nampula"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Namibia",
+      "code": "NA",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Windhoek",
+        "Walvis Bay",
+        "Swakopmund"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Niger",
+      "code": "NE",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Niamey",
+        "Zinder"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Nigeria",
+      "code": "NG",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Lagos",
+        "Abuja",
+        "Kano",
+        "Ibadan",
+        "Port Harcourt",
+        "Benin City"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Rwanda",
+      "code": "RW",
+      "languages": [
+        "English",
+        "French"
+      ],
+      "cities": [
+        "Kigali"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "São Tomé and Príncipe",
+      "code": "ST",
+      "languages": [
+        "Portuguese"
+      ],
+      "cities": [
+        "São Tomé"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Senegal",
+      "code": "SN",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Dakar",
+        "Thiès",
+        "Saint-Louis"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Seychelles",
+      "code": "SC",
+      "languages": [
+        "English",
+        "French"
+      ],
+      "cities": [
+        "Victoria"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Sierra Leone",
+      "code": "SL",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Freetown"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Somalia",
+      "code": "SO",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Mogadishu",
+        "Hargeisa"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "South Africa",
+      "code": "ZA",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Johannesburg",
+        "Cape Town",
+        "Durban",
+        "Pretoria",
+        "Gqeberha"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "South Sudan",
+      "code": "SS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Juba"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Sudan",
+      "code": "SD",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Khartoum",
+        "Omdurman",
+        "Port Sudan"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Tanzania",
+      "code": "TZ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Dar es Salaam",
+        "Dodoma",
+        "Arusha",
+        "Mwanza"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Togo",
+      "code": "TG",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Lomé"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Tunisia",
+      "code": "TN",
+      "languages": [
+        "Arabic",
+        "French"
+      ],
+      "cities": [
+        "Tunis",
+        "Sfax",
+        "Sousse"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Uganda",
+      "code": "UG",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kampala",
+        "Gulu",
+        "Mbarara"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Zambia",
+      "code": "ZM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Lusaka",
+        "Ndola",
+        "Kitwe"
+      ]
+    },
+    {
+      "continent": "Africa",
+      "name": "Zimbabwe",
+      "code": "ZW",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Harare",
+        "Bulawayo",
+        "Mutare"
+      ]
+    },
+    {
+      "continent": "Antarctica",
+      "name": "Antarctica",
+      "code": "AQ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "McMurdo Station",
+        "Rothera",
+        "Scott Base",
+        "Palmer Station"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Afghanistan",
+      "code": "AF",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kabul",
+        "Kandahar",
+        "Herat",
+        "Mazar-i-Sharif"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Armenia",
+      "code": "AM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Yerevan",
+        "Gyumri"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Azerbaijan",
+      "code": "AZ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Baku",
+        "Ganja"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Bahrain",
+      "code": "BH",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Manama"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Bangladesh",
+      "code": "BD",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Dhaka",
+        "Chittagong",
+        "Khulna",
+        "Sylhet"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Bhutan",
+      "code": "BT",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Thimphu"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Brunei",
+      "code": "BN",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Bandar Seri Begawan"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Cambodia",
+      "code": "KH",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Phnom Penh",
+        "Siem Reap",
+        "Sihanoukville"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "China",
+      "code": "CN",
+      "languages": [
+        "Chinese",
+        "English"
+      ],
+      "cities": [
+        "Beijing",
+        "Shanghai",
+        "Guangzhou",
+        "Shenzhen",
+        "Chengdu",
+        "Hangzhou",
+        "Xi'an"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Cyprus",
+      "code": "CY",
+      "languages": [
+        "English",
+        "Greek"
+      ],
+      "cities": [
+        "Nicosia",
+        "Limassol",
+        "Larnaca"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Georgia",
+      "code": "GE",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Tbilisi",
+        "Batumi"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "India",
+      "code": "IN",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "cities": [
+        "Mumbai",
+        "Delhi",
+        "Bengaluru",
+        "Hyderabad",
+        "Chennai",
+        "Kolkata",
+        "Pune",
+        "Ahmedabad"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Indonesia",
+      "code": "ID",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Jakarta",
+        "Surabaya",
+        "Bandung",
+        "Medan",
+        "Denpasar"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Iran",
+      "code": "IR",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Tehran",
+        "Mashhad",
+        "Isfahan",
+        "Shiraz"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Iraq",
+      "code": "IQ",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Baghdad",
+        "Basra",
+        "Erbil",
+        "Mosul"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Israel",
+      "code": "IL",
+      "languages": [
+        "English",
+        "Arabic"
+      ],
+      "cities": [
+        "Tel Aviv",
+        "Jerusalem",
+        "Haifa"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Japan",
+      "code": "JP",
+      "languages": [
+        "Japanese",
+        "English"
+      ],
+      "cities": [
+        "Tokyo",
+        "Osaka",
+        "Yokohama",
+        "Nagoya",
+        "Sapporo",
+        "Fukuoka",
+        "Kyoto"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Jordan",
+      "code": "JO",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Amman",
+        "Zarqa",
+        "Irbid",
+        "Aqaba"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Kazakhstan",
+      "code": "KZ",
+      "languages": [
+        "English",
+        "Russian"
+      ],
+      "cities": [
+        "Almaty",
+        "Astana",
+        "Shymkent"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Kuwait",
+      "code": "KW",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Kuwait City"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Kyrgyzstan",
+      "code": "KG",
+      "languages": [
+        "English",
+        "Russian"
+      ],
+      "cities": [
+        "Bishkek",
+        "Osh"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Laos",
+      "code": "LA",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Vientiane",
+        "Luang Prabang"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Lebanon",
+      "code": "LB",
+      "languages": [
+        "Arabic",
+        "French",
+        "English"
+      ],
+      "cities": [
+        "Beirut",
+        "Tripoli",
+        "Sidon"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Malaysia",
+      "code": "MY",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kuala Lumpur",
+        "George Town",
+        "Johor Bahru",
+        "Kota Kinabalu"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Maldives",
+      "code": "MV",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Malé"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Mongolia",
+      "code": "MN",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Ulaanbaatar"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Myanmar",
+      "code": "MM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Yangon",
+        "Mandalay",
+        "Naypyidaw"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Nepal",
+      "code": "NP",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kathmandu",
+        "Pokhara"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "North Korea",
+      "code": "KP",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Pyongyang"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Oman",
+      "code": "OM",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Muscat",
+        "Salalah",
+        "Sohar"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Pakistan",
+      "code": "PK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Karachi",
+        "Lahore",
+        "Islamabad",
+        "Rawalpindi",
+        "Peshawar",
+        "Faisalabad"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Palestine",
+      "code": "PS",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Ramallah",
+        "Gaza",
+        "Hebron",
+        "Nablus"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Philippines",
+      "code": "PH",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Manila",
+        "Quezon City",
+        "Cebu",
+        "Davao"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Qatar",
+      "code": "QA",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Doha"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Saudi Arabia",
+      "code": "SA",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Riyadh",
+        "Jeddah",
+        "Mecca",
+        "Medina",
+        "Dammam"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Singapore",
+      "code": "SG",
+      "languages": [
+        "English",
+        "Chinese"
+      ],
+      "cities": [
+        "Singapore"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "South Korea",
+      "code": "KR",
+      "languages": [
+        "Korean",
+        "English"
+      ],
+      "cities": [
+        "Seoul",
+        "Busan",
+        "Incheon",
+        "Daegu"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Sri Lanka",
+      "code": "LK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Colombo",
+        "Kandy",
+        "Galle"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Syria",
+      "code": "SY",
+      "languages": [
+        "Arabic"
+      ],
+      "cities": [
+        "Damascus",
+        "Aleppo",
+        "Homs"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Taiwan",
+      "code": "TW",
+      "languages": [
+        "Chinese",
+        "English"
+      ],
+      "cities": [
+        "Taipei",
+        "Kaohsiung",
+        "Taichung",
+        "Tainan"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Tajikistan",
+      "code": "TJ",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Dushanbe"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Thailand",
+      "code": "TH",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Bangkok",
+        "Chiang Mai",
+        "Phuket",
+        "Pattaya"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Timor-Leste",
+      "code": "TL",
+      "languages": [
+        "Portuguese",
+        "English"
+      ],
+      "cities": [
+        "Dili"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Turkey",
+      "code": "TR",
+      "languages": [
+        "Turkish",
+        "English"
+      ],
+      "cities": [
+        "Istanbul",
+        "Ankara",
+        "Izmir",
+        "Antalya",
+        "Bursa"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Turkmenistan",
+      "code": "TM",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Ashgabat"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "United Arab Emirates",
+      "code": "AE",
+      "languages": [
+        "Arabic",
+        "English"
+      ],
+      "cities": [
+        "Dubai",
+        "Abu Dhabi",
+        "Sharjah",
+        "Ajman"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Uzbekistan",
+      "code": "UZ",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Tashkent",
+        "Samarkand",
+        "Bukhara"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Vietnam",
+      "code": "VN",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Ho Chi Minh City",
+        "Hanoi",
+        "Da Nang",
+        "Hai Phong"
+      ]
+    },
+    {
+      "continent": "Asia",
+      "name": "Yemen",
+      "code": "YE",
+      "languages": [
+        "Arabic"
+      ],
+      "cities": [
+        "Sana'a",
+        "Aden"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Albania",
+      "code": "AL",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Tirana",
+        "Durrës",
+        "Vlorë"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Andorra",
+      "code": "AD",
+      "languages": [
+        "French",
+        "Spanish"
+      ],
+      "cities": [
+        "Andorra la Vella"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Austria",
+      "code": "AT",
+      "languages": [
+        "German",
+        "English"
+      ],
+      "cities": [
+        "Vienna",
+        "Graz",
+        "Linz",
+        "Salzburg",
+        "Innsbruck"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Belarus",
+      "code": "BY",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Minsk",
+        "Gomel",
+        "Brest"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Belgium",
+      "code": "BE",
+      "languages": [
+        "Dutch",
+        "French",
+        "German",
+        "English"
+      ],
+      "cities": [
+        "Brussels",
+        "Antwerp",
+        "Ghent",
+        "Liège",
+        "Bruges"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Bosnia and Herzegovina",
+      "code": "BA",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Sarajevo",
+        "Banja Luka",
+        "Mostar"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Bulgaria",
+      "code": "BG",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Sofia",
+        "Plovdiv",
+        "Varna",
+        "Burgas"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Croatia",
+      "code": "HR",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Zagreb",
+        "Split",
+        "Dubrovnik",
+        "Rijeka"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Czechia",
+      "code": "CZ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Prague",
+        "Brno",
+        "Ostrava"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Denmark",
+      "code": "DK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Copenhagen",
+        "Aarhus",
+        "Odense",
+        "Aalborg"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Estonia",
+      "code": "EE",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Tallinn",
+        "Tartu"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Finland",
+      "code": "FI",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Helsinki",
+        "Espoo",
+        "Tampere",
+        "Oulu"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "France",
+      "code": "FR",
+      "languages": [
+        "French",
+        "English"
+      ],
+      "cities": [
+        "Paris",
+        "Marseille",
+        "Lyon",
+        "Toulouse",
+        "Nice",
+        "Nantes",
+        "Bordeaux",
+        "Lille"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Germany",
+      "code": "DE",
+      "languages": [
+        "German",
+        "English"
+      ],
+      "cities": [
+        "Berlin",
+        "Hamburg",
+        "Munich",
+        "Cologne",
+        "Frankfurt",
+        "Stuttgart",
+        "Düsseldorf"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Greece",
+      "code": "GR",
+      "languages": [
+        "Greek",
+        "English"
+      ],
+      "cities": [
+        "Athens",
+        "Thessaloniki",
+        "Patras",
+        "Heraklion"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Hungary",
+      "code": "HU",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Budapest",
+        "Debrecen",
+        "Szeged"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Iceland",
+      "code": "IS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Reykjavík",
+        "Akureyri"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Ireland",
+      "code": "IE",
+      "languages": [
+        "English",
+        "Irish"
+      ],
+      "cities": [
+        "Dublin",
+        "Cork",
+        "Galway",
+        "Limerick",
+        "Waterford"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Italy",
+      "code": "IT",
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "cities": [
+        "Rome",
+        "Milan",
+        "Naples",
+        "Turin",
+        "Florence",
+        "Bologna",
+        "Venice",
+        "Palermo"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Kosovo",
+      "code": "XK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Pristina",
+        "Prizren"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Latvia",
+      "code": "LV",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Riga",
+        "Daugavpils"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Liechtenstein",
+      "code": "LI",
+      "languages": [
+        "German",
+        "English"
+      ],
+      "cities": [
+        "Vaduz"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Lithuania",
+      "code": "LT",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Vilnius",
+        "Kaunas",
+        "Klaipėda"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Luxembourg",
+      "code": "LU",
+      "languages": [
+        "French",
+        "German",
+        "English"
+      ],
+      "cities": [
+        "Luxembourg"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Malta",
+      "code": "MT",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Valletta",
+        "Birkirkara",
+        "Sliema"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Moldova",
+      "code": "MD",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Chișinău"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Monaco",
+      "code": "MC",
+      "languages": [
+        "French",
+        "English"
+      ],
+      "cities": [
+        "Monaco"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Montenegro",
+      "code": "ME",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Podgorica",
+        "Budva",
+        "Kotor"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Netherlands",
+      "code": "NL",
+      "languages": [
+        "Dutch",
+        "English"
+      ],
+      "cities": [
+        "Amsterdam",
+        "Rotterdam",
+        "The Hague",
+        "Utrecht",
+        "Eindhoven"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "North Macedonia",
+      "code": "MK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Skopje",
+        "Bitola"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Norway",
+      "code": "NO",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Oslo",
+        "Bergen",
+        "Trondheim",
+        "Stavanger"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Poland",
+      "code": "PL",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Warsaw",
+        "Kraków",
+        "Łódź",
+        "Wrocław",
+        "Gdańsk",
+        "Poznań"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Portugal",
+      "code": "PT",
+      "languages": [
+        "Portuguese",
+        "English"
+      ],
+      "cities": [
+        "Lisbon",
+        "Porto",
+        "Braga",
+        "Faro",
+        "Coimbra"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Romania",
+      "code": "RO",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Bucharest",
+        "Cluj-Napoca",
+        "Timișoara",
+        "Iași"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Russia",
+      "code": "RU",
+      "languages": [
+        "Russian",
+        "English"
+      ],
+      "cities": [
+        "Moscow",
+        "Saint Petersburg",
+        "Novosibirsk",
+        "Yekaterinburg",
+        "Kazan"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "San Marino",
+      "code": "SM",
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "cities": [
+        "San Marino"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Serbia",
+      "code": "RS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Belgrade",
+        "Novi Sad",
+        "Niš"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Slovakia",
+      "code": "SK",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Bratislava",
+        "Košice"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Slovenia",
+      "code": "SI",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Ljubljana",
+        "Maribor"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Spain",
+      "code": "ES",
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "cities": [
+        "Madrid",
+        "Barcelona",
+        "Valencia",
+        "Seville",
+        "Bilbao",
+        "Málaga",
+        "Zaragoza"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Sweden",
+      "code": "SE",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Stockholm",
+        "Gothenburg",
+        "Malmö",
+        "Uppsala"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Switzerland",
+      "code": "CH",
+      "languages": [
+        "German",
+        "French",
+        "Italian",
+        "English"
+      ],
+      "cities": [
+        "Zurich",
+        "Geneva",
+        "Basel",
+        "Bern",
+        "Lausanne"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "Ukraine",
+      "code": "UA",
+      "languages": [
+        "English",
+        "Russian"
+      ],
+      "cities": [
+        "Kyiv",
+        "Kharkiv",
+        "Odesa",
+        "Lviv",
+        "Dnipro"
+      ]
+    },
+    {
+      "continent": "Europe",
+      "name": "United Kingdom",
+      "code": "GB",
+      "languages": [
+        "English",
+        "Welsh",
+        "Irish",
+        "Scottish Gaelic"
+      ],
+      "cities": []
+    },
+    {
+      "continent": "Europe",
+      "name": "Vatican City",
+      "code": "VA",
+      "languages": [
+        "Italian",
+        "English"
+      ],
+      "cities": [
+        "Vatican City"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Antigua and Barbuda",
+      "code": "AG",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "St. John's"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Bahamas",
+      "code": "BS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Nassau",
+        "Freeport"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Barbados",
+      "code": "BB",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Bridgetown"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Belize",
+      "code": "BZ",
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "cities": [
+        "Belize City",
+        "Belmopan"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Canada",
+      "code": "CA",
+      "languages": [
+        "English",
+        "French"
+      ],
+      "cities": [
+        "Toronto",
+        "Montreal",
+        "Vancouver",
+        "Calgary",
+        "Ottawa",
+        "Edmonton",
+        "Winnipeg"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Costa Rica",
+      "code": "CR",
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "cities": [
+        "San José",
+        "Alajuela",
+        "Cartago"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Cuba",
+      "code": "CU",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Havana",
+        "Santiago de Cuba",
+        "Camagüey"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Dominica",
+      "code": "DM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Roseau"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Dominican Republic",
+      "code": "DO",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Santo Domingo",
+        "Santiago"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "El Salvador",
+      "code": "SV",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "San Salvador",
+        "Santa Ana"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Grenada",
+      "code": "GD",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "St. George's"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Guatemala",
+      "code": "GT",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Guatemala City",
+        "Quetzaltenango",
+        "Antigua Guatemala"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Haiti",
+      "code": "HT",
+      "languages": [
+        "French"
+      ],
+      "cities": [
+        "Port-au-Prince",
+        "Cap-Haïtien"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Honduras",
+      "code": "HN",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Tegucigalpa",
+        "San Pedro Sula"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Jamaica",
+      "code": "JM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kingston",
+        "Montego Bay",
+        "Spanish Town"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Mexico",
+      "code": "MX",
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "cities": [
+        "Mexico City",
+        "Guadalajara",
+        "Monterrey",
+        "Puebla",
+        "Tijuana",
+        "Cancún",
+        "Mérida"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Nicaragua",
+      "code": "NI",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Managua",
+        "León",
+        "Granada"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Panama",
+      "code": "PA",
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "cities": [
+        "Panama City",
+        "Colón"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Saint Kitts and Nevis",
+      "code": "KN",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Basseterre"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Saint Lucia",
+      "code": "LC",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Castries"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Saint Vincent and the Grenadines",
+      "code": "VC",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Kingstown"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "Trinidad and Tobago",
+      "code": "TT",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Port of Spain",
+        "San Fernando"
+      ]
+    },
+    {
+      "continent": "North America",
+      "name": "United States",
+      "code": "US",
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "cities": []
+    },
+    {
+      "continent": "Oceania",
+      "name": "Australia",
+      "code": "AU",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Sydney",
+        "Melbourne",
+        "Brisbane",
+        "Perth",
+        "Adelaide",
+        "Gold Coast",
+        "Canberra",
+        "Hobart"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Fiji",
+      "code": "FJ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Suva",
+        "Nadi"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Kiribati",
+      "code": "KI",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Tarawa"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Marshall Islands",
+      "code": "MH",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Majuro"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Micronesia",
+      "code": "FM",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Palikir"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Nauru",
+      "code": "NR",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Yaren"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "New Zealand",
+      "code": "NZ",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Auckland",
+        "Wellington",
+        "Christchurch",
+        "Hamilton",
+        "Dunedin"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Palau",
+      "code": "PW",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Ngerulmud"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Papua New Guinea",
+      "code": "PG",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Port Moresby",
+        "Lae"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Samoa",
+      "code": "WS",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Apia"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Solomon Islands",
+      "code": "SB",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Honiara"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Tonga",
+      "code": "TO",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Nuku'alofa"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Tuvalu",
+      "code": "TV",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Funafuti"
+      ]
+    },
+    {
+      "continent": "Oceania",
+      "name": "Vanuatu",
+      "code": "VU",
+      "languages": [
+        "English",
+        "French"
+      ],
+      "cities": [
+        "Port Vila"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Argentina",
+      "code": "AR",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Buenos Aires",
+        "Córdoba",
+        "Rosario",
+        "Mendoza",
+        "La Plata"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Bolivia",
+      "code": "BO",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "La Paz",
+        "Santa Cruz",
+        "Cochabamba",
+        "Sucre"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Brazil",
+      "code": "BR",
+      "languages": [
+        "Portuguese",
+        "English"
+      ],
+      "cities": [
+        "São Paulo",
+        "Rio de Janeiro",
+        "Brasília",
+        "Salvador",
+        "Fortaleza",
+        "Belo Horizonte",
+        "Manaus",
+        "Curitiba"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Chile",
+      "code": "CL",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Santiago",
+        "Valparaíso",
+        "Concepción",
+        "Antofagasta"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Colombia",
+      "code": "CO",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Bogotá",
+        "Medellín",
+        "Cali",
+        "Barranquilla",
+        "Cartagena"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Ecuador",
+      "code": "EC",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Quito",
+        "Guayaquil",
+        "Cuenca"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Guyana",
+      "code": "GY",
+      "languages": [
+        "English"
+      ],
+      "cities": [
+        "Georgetown"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Paraguay",
+      "code": "PY",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Asunción",
+        "Ciudad del Este"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Peru",
+      "code": "PE",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Lima",
+        "Arequipa",
+        "Cusco",
+        "Trujillo"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Suriname",
+      "code": "SR",
+      "languages": [
+        "Dutch",
+        "English"
+      ],
+      "cities": [
+        "Paramaribo"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Uruguay",
+      "code": "UY",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Montevideo",
+        "Punta del Este"
+      ]
+    },
+    {
+      "continent": "South America",
+      "name": "Venezuela",
+      "code": "VE",
+      "languages": [
+        "Spanish"
+      ],
+      "cities": [
+        "Caracas",
+        "Maracaibo",
+        "Valencia"
+      ]
+    }
+  ]
+}

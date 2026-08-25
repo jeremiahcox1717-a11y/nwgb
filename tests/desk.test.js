@@ -22,21 +22,32 @@ after(() => {
 });
 
 test("place cascade fills countries cities and postcodes", () => {
+  const continents = postcodes.placeCatalog().continents;
+  assert.deepEqual(continents, [
+    "Africa",
+    "Antarctica",
+    "Asia",
+    "Europe",
+    "North America",
+    "Oceania",
+    "South America",
+  ]);
   const europeEnglish = postcodes.countriesFor("Europe", "English");
-  assert.deepEqual(
-    europeEnglish.map((row) => row.code),
-    ["GB"],
-  );
+  assert.ok(europeEnglish.some((row) => row.code === "GB"));
+  assert.ok(europeEnglish.some((row) => row.code === "IE"));
+  const africaEnglish = postcodes.countriesFor("Africa", "English");
+  assert.ok(africaEnglish.some((row) => row.code === "NG"));
+  const asia = postcodes.countriesFor("Asia", "English");
+  assert.ok(asia.some((row) => row.code === "IN"));
   const us = postcodes.countriesFor("North America", "English");
-  assert.deepEqual(
-    us.map((row) => row.code),
-    ["US"],
-  );
+  assert.ok(us.some((row) => row.code === "US"));
   const manchester = postcodes.citiesFor({ continent: "Europe", language: "English", country: "GB" });
   assert.ok(manchester.includes("Manchester"));
   const wales = postcodes.citiesFor({ continent: "Europe", language: "Welsh", country: "GB" });
   assert.ok(wales.includes("Aberdare"));
   assert.equal(wales.includes("Manchester"), false);
+  const tokyo = postcodes.citiesFor({ continent: "Asia", language: "English", country: "JP" });
+  assert.ok(tokyo.includes("Tokyo"));
   const before = postcodes.nextPostcode({ continent: "Europe", language: "English", country: "GB" });
   assert.equal(before.exhausted, true);
   const ticket = postcodes.nextPostcode({
