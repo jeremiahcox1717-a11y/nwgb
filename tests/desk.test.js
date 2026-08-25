@@ -10,6 +10,7 @@ process.env.OWNER_NAME = "Jordan";
 
 const postcodes = await import("../server/postcodes.js");
 const classify = await import("../server/classify.js");
+const niches = await import("../server/niches.js");
 
 before(() => {
   if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
@@ -116,3 +117,20 @@ test("chain names are skipped", () => {
   assert.equal(classify.isChainName("Greggs", ["greggs", "tesco"]), true);
   assert.equal(classify.isChainName("Nina's Clippers", ["greggs", "tesco"]), false);
 });
+
+test("instagram hunt looks for barbers stylists and braiders", () => {
+  const beauty = niches.instagramHuntPlans("Manchester", "beauty");
+  const labels = beauty.map((row) => row.label);
+  assert.deepEqual(labels, ["Barbers", "Braiders", "Stylists", "Locs / weaves", "Nails / lashes"]);
+  const blob = beauty.map((row) => row.query).join(" ");
+  assert.match(blob, /barber/);
+  assert.match(blob, /braider/);
+  assert.match(blob, /hair stylist/);
+  assert.match(blob, /site:instagram.com/);
+  assert.equal(niches.looksLikeHairTrade("Braids by Nina · Manchester"), true);
+  assert.equal(niches.looksLikeHairTrade("fadez_mcr"), true);
+  assert.equal(niches.looksLikeHairTrade("Joe's plumbing and boilers"), false);
+  assert.ok(niches.OSM_NICHE_REGEX.beauty.includes("barber"));
+  assert.deepEqual(niches.googlePlaceTypesFor("beauty"), ["hair_care", "beauty_salon", "spa"]);
+});
+

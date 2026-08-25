@@ -356,6 +356,23 @@ function renderSummary(summary) {
   `;
 }
 
+function renderInstagramHuntLinks(data) {
+  const searches = Array.isArray(data.searches) && data.searches.length
+    ? data.searches
+    : data.googleUrl
+      ? [{ label: "Instagram", googleUrl: data.googleUrl, bingUrl: data.bingUrl }]
+      : [];
+  if (!searches.length) return;
+  const links = searches
+    .map(
+      (row) =>
+        `<a class="ghost" target="_blank" rel="noreferrer" href="${escapeHtml(row.googleUrl)}">${escapeHtml(row.label)}</a>`,
+    )
+    .join(" ");
+  $("ig-links").classList.remove("hidden");
+  $("ig-links").innerHTML = `Instagram with no website: ${links} — open a profile. If the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
+}
+
 function runHunt(postcode) {
   if (!postcode) return;
   $("hunt-postcode").value = postcode;
@@ -376,9 +393,7 @@ function runHunt(postcode) {
     $("hunt-status").textContent = JSON.parse(e.data).message;
   });
   es.addEventListener("instagramQuery", (e) => {
-    const data = JSON.parse(e.data);
-    $("ig-links").classList.remove("hidden");
-    $("ig-links").innerHTML = `Instagram hunt: <a class="ghost" target="_blank" rel="noreferrer" href="${data.googleUrl}">Google this query</a> <a class="ghost" target="_blank" rel="noreferrer" href="${data.bingUrl}">Bing</a> — open a profile, if the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
+    renderInstagramHuntLinks(JSON.parse(e.data));
   });
   es.addEventListener("fail", (e) => {
     finished = true;

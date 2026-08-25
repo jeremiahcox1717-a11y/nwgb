@@ -40,7 +40,7 @@
           <h1>NWGB</h1>
         </div>
         <p class="promise">
-          Finds shops with no website, no Google profile, or an Instagram and nothing to book.
+          Finds barbers, stylists, braiders and other shops with no website, no Google profile, or an Instagram and nothing to book.
           One postcode at a time. Never the same code twice.
         </p>
         <nav>
@@ -107,8 +107,8 @@
             <label>
               Niche
               <select id="niche">
+                <option value="beauty" selected>Barbers, stylists, braiders, beauty</option>
                 <option value="all">Anything local</option>
-                <option value="beauty">Hair / beauty</option>
                 <option value="trades">Trades</option>
                 <option value="food">Food</option>
                 <option value="auto">Auto</option>
@@ -122,7 +122,7 @@
               <label class="check"><input type="checkbox" name="mode" value="noWebsite" checked /> No website</label>
               <label class="check"><input type="checkbox" name="mode" value="noGoogle" checked /> Not on Google</label>
               <label class="check"><input type="checkbox" name="mode" value="onGoogleNoWebsite" checked /> On Google, no website</label>
-              <label class="check"><input type="checkbox" name="mode" value="instagram" checked /> Instagram, no site / no booking</label>
+              <label class="check"><input type="checkbox" name="mode" value="instagram" checked /> Instagram only — no website, no booking</label>
             </fieldset>
             <button type="submit" class="primary">Run hunt</button>
           </form>
