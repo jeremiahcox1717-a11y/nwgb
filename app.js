@@ -16,6 +16,7 @@ const state = {
   me: null,
   ticket: null,
   leads: [],
+  countryOptions: [],
   cityOptions: [],
 };
 
@@ -98,6 +99,36 @@ function continentNames() {
   return unique(places().map((row) => row.continent));
 }
 
+function setCountries(countries, current) {
+  state.countryOptions = countries || [];
+  if ($("country-search")) {
+    $("country-search").value = "";
+    $("country-search").disabled = state.countryOptions.length === 0;
+  }
+  renderCountries(current || "");
+}
+
+function renderCountries(current) {
+  const selected = current || $("country")?.value || "";
+  const needle = ($("country-search")?.value || "").trim().toLowerCase();
+  let matches = needle
+    ? state.countryOptions.filter(
+        (row) => row.name.toLowerCase().includes(needle) || row.code.toLowerCase().includes(needle),
+      )
+    : state.countryOptions.slice();
+  if (selected && !matches.some((row) => row.code === selected)) {
+    const kept = state.countryOptions.find((row) => row.code === selected);
+    if (kept) matches = [kept, ...matches];
+  }
+  fillSelect(
+    "country",
+    matches,
+    matches.length ? "Pick country" : needle ? "No countries match" : "Pick country",
+    selected,
+  );
+  if ($("country")) $("country").disabled = state.countryOptions.length === 0;
+}
+
 function setCities(cities, current) {
   state.cityOptions = cities || [];
   if ($("city-search")) {
@@ -127,7 +158,7 @@ function restoreCascade(settings) {
   const city = settings.city || settings.town || settings.metro || "";
   fillSelect("continent", continentNames(), "Pick continent", continent);
   fillSelect("language", continent ? languagesFor(continent) : [], "Pick language", language);
-  fillSelect("country", continent && language ? countriesFor(continent, language) : [], "Pick country", country);
+  setCountries(continent && language ? countriesFor(continent, language) : [], country);
   setCities(country ? citiesFor({ continent, language, country }) : [], city);
   syncGiveButton();
   refreshRemaining();
@@ -139,10 +170,10 @@ function onCascadeChange(level) {
   const country = level === "continent" || level === "language" ? "" : $("country").value;
   if (level === "continent") {
     fillSelect("language", languagesFor(continent), "Pick language", "");
-    fillSelect("country", [], "Pick country", "");
+    setCountries([], "");
     setCities([], "");
   } else if (level === "language") {
-    fillSelect("country", countriesFor(continent, language), "Pick country", "");
+    setCountries(countriesFor(continent, language), "");
     setCities([], "");
   } else if (level === "country") {
     setCities(country ? citiesFor({ continent, language, country }) : [], "");
@@ -445,6 +476,8 @@ $("continent")?.addEventListener("change", () => onCascadeChange("continent"));
 $("language")?.addEventListener("change", () => onCascadeChange("language"));
 $("country")?.addEventListener("change", () => onCascadeChange("country"));
 $("city")?.addEventListener("change", () => onCascadeChange("city"));
+$("country-search")?.addEventListener("input", () => renderCountries());
+$("city-search")?.addEventListener("input", () => renderCities());
 
 $("give").addEventListener("click", giveNext);
 $("hunt-ticket").addEventListener("click", () => {

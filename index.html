@@ -70,13 +70,14 @@
                 <option value="">Pick language</option>
               </select>
             </label>
-            <label>
+            <label class="list-picker">
               Country
-              <select id="country" disabled>
+              <input id="country-search" type="search" placeholder="Type to find a country" disabled autocomplete="off" />
+              <select id="country" size="8" disabled>
                 <option value="">Pick country</option>
               </select>
             </label>
-            <label class="city-picker">
+            <label class="list-picker">
               City
               <input id="city-search" type="search" placeholder="Type to find a city" disabled autocomplete="off" />
               <select id="city" size="8" disabled>
