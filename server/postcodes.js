@@ -58,8 +58,7 @@ export function filterUk({ nation = "", town = "", area = "" } = {}) {
       if (String(row.nation).toLowerCase() !== nationNeedle) return false;
     }
     if (townNeedle) {
-      const hay = `${row.town} ${row.region}`.toLowerCase();
-      if (!hay.includes(townNeedle)) return false;
+      if (!String(row.town).toLowerCase().includes(townNeedle)) return false;
     }
     if (areaCompact) {
       if (!compactPostcode(row.code).startsWith(areaCompact)) return false;

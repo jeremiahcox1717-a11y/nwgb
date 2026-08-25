@@ -34,10 +34,15 @@ const NICHE_REGEX = {
 
 function overpassQuery(lat, lon, radius, niche) {
   const around = `(around:${radius},${lat},${lon})`;
-  const extra =
-    niche && niche !== "all" && NICHE_REGEX[niche]
-      ? `nwr[~"^(shop|craft|amenity|office|leisure)$"~"${NICHE_REGEX[niche]}"]${around};`
-      : "";
+  if (niche && niche !== "all" && NICHE_REGEX[niche]) {
+    return `
+[out:json][timeout:28];
+(
+  nwr[~"^(shop|craft|amenity|office|leisure|tourism)$"~"${NICHE_REGEX[niche]}"]${around};
+);
+out tags center 120;
+`.trim();
+  }
   return `
 [out:json][timeout:28];
 (
@@ -48,7 +53,6 @@ function overpassQuery(lat, lon, radius, niche) {
   nwr["tourism"~"hotel|guest_house|hostel|apartment"]${around};
   nwr["leisure"~"fitness_centre|sports_centre|sauna"]${around};
   nwr["contact:instagram"]${around};
-  ${extra}
 );
 out tags center 120;
 `.trim();
@@ -94,6 +98,7 @@ export async function huntOsm({ lat, lon, radius, town, postcode, niche }) {
     const name = tags.name || tags["name:en"] || tags.operator;
     if (!name) continue;
     if (isChainName(name, CHAINS)) continue;
+    if (categoryFromTags(tags) === "yes") continue;
     const key = `${name.toLowerCase()}|${tags["addr:street"] || ""}|${tags["addr:housenumber"] || ""}`;
     if (seen.has(key)) continue;
     seen.add(key);
