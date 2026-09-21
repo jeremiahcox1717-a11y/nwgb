@@ -155,8 +155,10 @@ export function classifyOnlinePresence(tags = {}, extraUrls = []) {
   };
 }
 
-export function scoreLead({ hasWebsite, hasBooking, google, instagram }) {
-  if (hasWebsite) return "skip";
+export function scoreLead({ hasWebsite, hasBooking, google, instagram, websiteQuality }) {
+  const outdated = websiteQuality === "outdated";
+  if (hasWebsite && !outdated) return "skip";
+  if (outdated && !hasBooking) return "hot";
   if (google === "none" && !hasBooking) return "hot";
   if (google === "blank" && !hasBooking) return "hot";
   if (instagram && !hasBooking) return "warm";
