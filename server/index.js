@@ -140,7 +140,11 @@ app.get("/api/hunt/stream", (req, res) => huntSse(req, res));
 app.post("/api/hunt", async (req, res) => {
   try {
     const result = await runHunt({
+      place: req.body?.place || req.body?.city,
+      city: req.body?.city,
       postcode: req.body?.postcode,
+      country: req.body?.country,
+      language: req.body?.language,
       modes: req.body?.modes,
       niche: req.body?.niche,
       radius: req.body?.radius,
@@ -204,6 +208,7 @@ app.get("/api/leads.csv", (_req, res) => {
     "postcode",
     "google",
     "website",
+    "websiteQuality",
     "instagram",
     "booking",
     "source",

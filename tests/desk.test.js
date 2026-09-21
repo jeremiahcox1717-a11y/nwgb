@@ -111,6 +111,16 @@ test("score hot when there is no google profile and no website", () => {
     classify.scoreLead({ hasWebsite: true, hasBooking: false, google: "complete", instagram: null }),
     "skip",
   );
+  assert.equal(
+    classify.scoreLead({
+      hasWebsite: true,
+      hasBooking: false,
+      google: "complete",
+      instagram: null,
+      websiteQuality: "outdated",
+    }),
+    "hot",
+  );
 });
 
 test("chain names are skipped", () => {

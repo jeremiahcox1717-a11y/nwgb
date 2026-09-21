@@ -186,14 +186,22 @@ async function onCascadeChange(level) {
     }
   }
   state.ticket = null;
-  $("ticket-code").textContent = "—";
-  $("ticket-place").textContent = "Pick continent, language, country, then city.";
+  if ($("city").value) {
+    $("ticket-code").textContent = $("city").value;
+    if ($("hunt-city")) $("hunt-city").value = $("city").value;
+  } else {
+    $("ticket-code").textContent = "—";
+    $("ticket-place").textContent = "Pick continent, language, country, then city.";
+  }
   syncGiveButton();
   await refreshRemaining();
 }
 
 function syncGiveButton() {
-  $("give").disabled = !$("city").value;
+  const ready = Boolean($("city").value);
+  $("give").disabled = !ready;
+  $("hunt-ticket").disabled = !ready;
+  if (ready && $("hunt-city")) $("hunt-city").value = $("city").value;
 }
 
 function filters() {
@@ -214,14 +222,13 @@ function setTicket(ticket) {
   if (ticket?.exhausted) {
     $("ticket-code").textContent = "DONE";
     $("ticket-place").textContent = ticket.message || "Filter exhausted";
-    $("ticket-remain").textContent = "0 left in this filter";
+    $("ticket-remain").textContent = "0 postcodes left in this city";
     return;
   }
   if (!ticket?.code) return;
   $("ticket-code").textContent = ticket.code;
   $("ticket-place").textContent = [ticket.town, ticket.nation].filter(Boolean).join(" · ");
-  $("ticket-remain").textContent = `${ticket.remaining} left in this city`;
-  $("hunt-postcode").value = ticket.code;
+  $("ticket-remain").textContent = `${ticket.remaining} postcodes left · city hunt does not need these`;
 }
 
 async function giveNext() {
@@ -237,11 +244,19 @@ async function giveNext() {
 
 async function refreshRemaining() {
   if (!$("city").value) {
-    $("ticket-remain").textContent = "Pick a city to see codes left";
+    $("ticket-remain").textContent = "Pick a city to hunt Google Maps";
+    $("ticket-code").textContent = "—";
+    $("ticket-place").textContent = "Pick continent, language, country, then city.";
     return;
   }
+  $("ticket-code").textContent = $("city").value;
+  $("ticket-place").textContent = [$("city").value, $("country").selectedOptions?.[0]?.textContent || $("country").value]
+    .filter(Boolean)
+    .join(" · ");
   const data = await api(`/api/postcodes/remaining?${query(filters())}`);
-  if (!state.ticket) $("ticket-remain").textContent = `${data.remaining} left in this city`;
+  if (!state.ticket) {
+    $("ticket-remain").textContent = `${data.remaining} optional postcodes left · hunt the whole city below`;
+  }
 }
 
 function modes() {
@@ -264,11 +279,17 @@ function card(lead, saved) {
   const why =
     lead.source === "instagram"
       ? "Instagram shop"
-      : lead.google === "none"
-        ? "No Google profile"
-        : lead.google === "blank"
-          ? "On Google, no website"
-          : "No website";
+      : lead.websiteQuality === "outdated"
+        ? "Outdated / bad website"
+        : lead.google === "none"
+          ? "No Google profile"
+          : lead.google === "blank"
+            ? "On Google Maps, no website"
+            : "No website";
+  const reasons =
+    lead.websiteQuality === "outdated" && Array.isArray(lead.websiteReasons) && lead.websiteReasons.length
+      ? `<p class="facts">why: ${escapeHtml(lead.websiteReasons.join(", "))}</p>`
+      : "";
   el.innerHTML = `
     <header>
       <div>
@@ -282,6 +303,7 @@ function card(lead, saved) {
       <span class="badge ${lead.score}">${lead.score}</span>
     </header>
     <p class="facts">${escapeHtml(lead.address || lead.snippet || "")}</p>
+    ${reasons}
     ${
       lead.phone
         ? `<p class="phone-row">
@@ -299,6 +321,7 @@ function card(lead, saved) {
       ${lead.mapsSearch ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.mapsSearch}">Maps</a>` : ""}
       ${lead.googleSearch ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.googleSearch}">Google</a>` : ""}
       ${lead.instagramSearch ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.instagramSearch}">Instagram</a>` : ""}
+      ${lead.website ? `<a class="ghost" target="_blank" rel="noreferrer" href="${escapeHtml(lead.website)}">Site</a>` : ""}
       ${lead.osmUrl ? `<a class="ghost" target="_blank" rel="noreferrer" href="${lead.osmUrl}">OSM</a>` : ""}
       ${saved ? `<button data-status="contacted">Contacted</button><button data-delete="1">Drop</button>` : `<button data-save="1">Save lead</button>`}
     </div>
@@ -339,7 +362,7 @@ function renderResults(leads) {
   const box = $("results");
   box.innerHTML = "";
   if (!leads.length) {
-    box.innerHTML = `<p class="hint">Nothing matched. Try a denser postcode or loosen the filters.</p>`;
+    box.innerHTML = `<p class="hint">Nothing matched. Try another city, a denser niche, or loosen the filters.</p>`;
     $("result-actions").hidden = true;
     return;
   }
@@ -373,18 +396,22 @@ function renderInstagramHuntLinks(data) {
   $("ig-links").innerHTML = `Instagram with no website: ${links} — open a profile. If the bio has no website and no Fresha/Booksy/Treatwell, keep it.`;
 }
 
-function runHunt(postcode) {
-  if (!postcode) return;
-  $("hunt-postcode").value = postcode;
-  $("hunt-status").textContent = `Hunting ${postcode}…`;
+function runHunt(place) {
+  const city = String(place || "").trim();
+  if (!city) return;
+  if ($("hunt-city")) $("hunt-city").value = city;
+  $("hunt-status").textContent = `Hunting Google Maps in ${city}…`;
   $("results").innerHTML = "";
   $("summary").classList.add("hidden");
   $("ig-links").classList.add("hidden");
   const params = query({
-    postcode,
+    place: city,
+    city,
+    country: $("country").value || "",
+    language: $("language").value || "",
     modes: modes().join(","),
     niche: $("niche").value,
-    radius: "1600",
+    radius: "12000",
     ...(state.pin ? { pin: state.pin } : {}),
   });
   const es = new EventSource(`/api/hunt/stream?${params}`);
@@ -403,7 +430,7 @@ function runHunt(postcode) {
   es.addEventListener("done", (e) => {
     finished = true;
     const data = JSON.parse(e.data);
-    $("hunt-status").textContent = `Done. ${data.leads.length} leads around ${data.geo.display || postcode}.`;
+    $("hunt-status").textContent = `Done. ${data.leads.length} leads in ${data.geo.display || city}.`;
     renderSummary(data.summary);
     renderResults(data.leads);
     es.close();
@@ -473,18 +500,18 @@ $("city-search").addEventListener("input", () => renderCities());
 
 $("give").addEventListener("click", giveNext);
 $("hunt-ticket").addEventListener("click", () => {
-  const code = state.ticket?.code || $("hunt-postcode").value;
-  if (code) runHunt(code);
+  const city = $("city").value || $("hunt-city")?.value;
+  if (city) runHunt(city);
 });
 $("undo").addEventListener("click", async () => {
   const data = await api("/api/postcodes/undo", { method: "POST" });
-  $("ticket-code").textContent = data.removed?.code ? `undid ${data.removed.code}` : "—";
+  $("ticket-code").textContent = data.removed?.code ? `undid ${data.removed.code}` : $("city").value || "—";
   state.ticket = null;
   refreshRemaining();
 });
 $("hunt-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  runHunt($("hunt-postcode").value.trim());
+  runHunt($("hunt-city").value.trim() || $("city").value);
 });
 $("save-hot").addEventListener("click", () => {
   saveLeads(state.leads.filter((l) => l.score === "hot" || l.score === "warm"));

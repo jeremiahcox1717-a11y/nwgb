@@ -2,14 +2,14 @@
 
 Jordan's private desk. It is not a product, not a client portal, and not meant for anyone else.
 
-You feed it a postcode. It hunts for local businesses that are still offline in the ways that matter:
+You feed it a **city**. It hunts Google Maps for local businesses that are still weak online:
 
 - no website
-- no Google Business Profile
-- on Google, but still no website
+- on Google Maps, but still no website
+- bad / old / outdated website
 - Instagram shops with no website and no booking link (Fresha, Booksy, Treatwell, and the rest)
 
-It also hands you **one unused postcode at a time**. Once a code has been given, it is burnt. The machine will not offer it twice unless you restore it.
+Postcodes are optional. The desk can still hand you **one unused postcode at a time** if you want a tight area, but city hunt does not require them.
 
 ## Run it
 
@@ -34,12 +34,11 @@ Without a Google key, hunts still run. OpenStreetMap supplies the street busines
 
 1. Pick **continent**, then **language**. That unlocks countries.
 2. Pick a **country**. That unlocks cities.
-3. Pick a **city**, then hit **Give me the next postcode**. That code is now used.
-4. Hit **Hunt this one**.
-5. Save the hot and warm leads. Download CSV when you want them out of the desk.
-6. Take the next code. Repeat. Never twice.
+3. Pick a **city**, then hit **Hunt this city on Google Maps**.
+4. Save the hot and warm leads. Download CSV when you want them out of the desk.
+5. Optional: **Next unused postcode** if you still want to burn codes one by one.
 
-If you mash the button by accident, **Undo last given**.
+If you mash the postcode button by accident, **Undo last given postcode**.
 
 ## Data
 
