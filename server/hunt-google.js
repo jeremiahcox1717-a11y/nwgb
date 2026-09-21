@@ -10,9 +10,11 @@ import {
 import { extractPublicPhone, normalizePhone, phonesFromHtml, sharePhonesByName } from "./phone.js";
 import {
   googlePlaceTypesFor,
+  googleTextQueriesFor,
   instagramHuntPlans,
   looksLikeHairTrade,
 } from "./niches.js";
+import { assessWebsiteUrl, inspectWebsite } from "./website-quality.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,6 +23,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHAINS = JSON.parse(
   fs.readFileSync(path.join(__dirname, "..", "data", "chains.json"), "utf8"),
 );
+
+const PLACES_FIELD_MASK =
+  "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber,places.internationalPhoneNumber,places.googleMapsUri,places.types,places.businessStatus,places.shortFormattedAddress";
 
 function decodeDuckLink(href) {
   try {
@@ -215,80 +220,170 @@ export async function fillMissingPhones(leads, town, onProgress) {
   return leads;
 }
 
-export async function huntGooglePlaces({ lat, lon, radius, town, postcode, niche }) {
+function leadFromGooglePlace(place, { town, postcode, lat, lon }) {
+  const name = place.displayName?.text;
+  if (!name || isChainName(name, CHAINS)) return null;
+  if (place.businessStatus && place.businessStatus !== "OPERATIONAL") return null;
+  const presence = classifyOnlinePresence({}, place.websiteUri ? [place.websiteUri] : []);
+  const urlCheck = presence.website ? assessWebsiteUrl(presence.website) : null;
+  const google = presence.hasWebsite ? "complete" : "blank";
+  return {
+    id: `ggl-${name}-${place.formattedAddress || ""}`.slice(0, 80),
+    name,
+    category: (place.types || [])[0] || "business",
+    address: place.formattedAddress || place.shortFormattedAddress || "",
+    phone:
+      normalizePhone(place.nationalPhoneNumber) ||
+      normalizePhone(place.internationalPhoneNumber) ||
+      null,
+    email: null,
+    postcode: postcode || "",
+    lat: lat ?? null,
+    lon: lon ?? null,
+    source: "google",
+    ...presence,
+    websiteQuality: urlCheck?.quality || (presence.hasWebsite ? "ok" : "none"),
+    websiteReasons: urlCheck?.reasons || [],
+    google,
+    mapsUrl: place.googleMapsUri,
+    mapsSearch: place.googleMapsUri,
+    googleSearch: `https://www.google.com/search?q=${encodeURIComponent(`"${name}" ${town || postcode}`)}`,
+    instagramSearch: `https://www.google.com/search?q=${encodeURIComponent(`site:instagram.com "${name}" ${town || ""}`)}`,
+    score: scoreLead({
+      hasWebsite: presence.hasWebsite,
+      hasBooking: presence.hasBooking,
+      google,
+      instagram: presence.instagram,
+      websiteQuality: urlCheck?.quality,
+    }),
+  };
+}
+
+async function searchTextPlaces({ key, query, lat, lon, radius }) {
+  const body = {
+    textQuery: query,
+    maxResultCount: 20,
+  };
+  if (lat != null && lon != null) {
+    body.locationBias = {
+      circle: {
+        center: { latitude: lat, longitude: lon },
+        radius: Number(radius) || 10000,
+      },
+    };
+  }
+  const res = await fetchText("https://places.googleapis.com/v1/places:searchText", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": PLACES_FIELD_MASK,
+    },
+    body: JSON.stringify(body),
+    timeoutMs: 20000,
+  });
+  if (!res.ok) return { ok: false, status: res.status, places: [] };
+  try {
+    const json = JSON.parse(res.text);
+    return { ok: true, places: json.places || [] };
+  } catch {
+    return { ok: false, status: "parse", places: [] };
+  }
+}
+
+export async function huntGooglePlaces({ lat, lon, radius, town, postcode, niche, mode = "city" }) {
   const key = process.env.GOOGLE_PLACES_API_KEY;
   if (!key) {
     return { skipped: true, leads: [], reason: "no-key" };
   }
 
-  const res = await fetchText("https://places.googleapis.com/v1/places:searchNearby", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": key,
-      "X-Goog-FieldMask":
-        "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber,places.internationalPhoneNumber,places.googleMapsUri,places.types,places.businessStatus,places.shortFormattedAddress",
-    },
-    body: JSON.stringify({
-      locationRestriction: {
-        circle: {
-          center: { latitude: lat, longitude: lon },
-          radius: Number(radius) || 1600,
-        },
-      },
-      includedTypes: googlePlaceTypesFor(niche),
-      maxResultCount: 20,
-    }),
-    timeoutMs: 20000,
-  });
-
-  if (!res.ok) {
-    return { skipped: false, leads: [], reason: `places-${res.status}` };
-  }
-
-  let json;
-  try {
-    json = JSON.parse(res.text);
-  } catch {
-    return { skipped: false, leads: [], reason: "places-parse" };
-  }
-
+  const placeLabel = town || postcode || "here";
+  const meters = Number(radius) || (mode === "city" ? 12000 : 1600);
+  const seen = new Set();
   const leads = [];
-  for (const place of json.places || []) {
-    const name = place.displayName?.text;
-    if (!name || isChainName(name, CHAINS)) continue;
-    const presence = classifyOnlinePresence({}, place.websiteUri ? [place.websiteUri] : []);
-    const google = presence.hasWebsite ? "complete" : "blank";
-    leads.push({
-      id: `ggl-${name}-${place.formattedAddress || ""}`.slice(0, 80),
-      name,
-      category: (place.types || [])[0] || "business",
-      address: place.formattedAddress || place.shortFormattedAddress || "",
-      phone:
-        normalizePhone(place.nationalPhoneNumber) ||
-        normalizePhone(place.internationalPhoneNumber) ||
-        null,
-      email: null,
-      postcode,
-      lat,
-      lon,
-      source: "google",
-      ...presence,
-      google,
-      mapsUrl: place.googleMapsUri,
-      mapsSearch: place.googleMapsUri,
-      googleSearch: `https://www.google.com/search?q=${encodeURIComponent(`"${name}" ${town || postcode}`)}`,
-      instagramSearch: `https://www.google.com/search?q=${encodeURIComponent(`site:instagram.com "${name}" ${town || ""}`)}`,
-      score: scoreLead({
-        hasWebsite: presence.hasWebsite,
-        hasBooking: presence.hasBooking,
-        google,
-        instagram: presence.instagram,
-      }),
-    });
+  let lastError = "";
+
+  const queries = googleTextQueriesFor(niche || "beauty", placeLabel);
+  for (let i = 0; i < queries.length; i += 1) {
+    const query = queries[i];
+    const result = await searchTextPlaces({ key, query, lat, lon, radius: meters });
+    if (!result.ok) {
+      lastError = `places-${result.status}`;
+      break;
+    }
+    for (const place of result.places) {
+      const lead = leadFromGooglePlace(place, { town, postcode, lat, lon });
+      if (!lead) continue;
+      const keyName = `${lead.name.toLowerCase()}|${(lead.address || "").toLowerCase()}`;
+      if (seen.has(keyName)) continue;
+      seen.add(keyName);
+      leads.push(lead);
+    }
+    if (i < queries.length - 1) await sleep(120);
   }
 
-  return { skipped: false, leads };
+  if (!leads.length) {
+    const types = googlePlaceTypesFor(niche);
+    const res = await fetchText("https://places.googleapis.com/v1/places:searchNearby", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": key,
+        "X-Goog-FieldMask": PLACES_FIELD_MASK,
+      },
+      body: JSON.stringify({
+        locationRestriction: {
+          circle: {
+            center: { latitude: lat, longitude: lon },
+            radius: meters,
+          },
+        },
+        includedTypes: types.slice(0, 10),
+        maxResultCount: 20,
+      }),
+      timeoutMs: 20000,
+    });
+    if (res.ok) {
+      try {
+        const json = JSON.parse(res.text);
+        for (const place of json.places || []) {
+          const lead = leadFromGooglePlace(place, { town, postcode, lat, lon });
+          if (!lead) continue;
+          const keyName = `${lead.name.toLowerCase()}|${(lead.address || "").toLowerCase()}`;
+          if (seen.has(keyName)) continue;
+          seen.add(keyName);
+          leads.push(lead);
+        }
+      } catch {
+        lastError = lastError || "places-parse";
+      }
+    } else if (!leads.length) {
+      return { skipped: false, leads: [], reason: lastError || `places-${res.status}` };
+    }
+  }
+
+  return { skipped: false, leads, reason: lastError || null, queries };
+}
+
+export async function markOutdatedWebsites(leads, onProgress, limit = 18) {
+  const candidates = leads.filter((lead) => lead.hasWebsite && lead.website).slice(0, limit);
+  for (let i = 0; i < candidates.length; i += 1) {
+    const lead = candidates[i];
+    onProgress?.(`Checking if ${lead.name}'s website looks outdated (${i + 1}/${candidates.length})`);
+    try {
+      const verdict = await inspectWebsite(lead.website);
+      lead.websiteQuality = verdict.quality;
+      lead.websiteReasons = verdict.reasons;
+      lead.score = scoreLead(lead);
+    } catch {
+      const fallback = assessWebsiteUrl(lead.website);
+      lead.websiteQuality = fallback.quality;
+      lead.websiteReasons = fallback.reasons;
+      lead.score = scoreLead(lead);
+    }
+    await sleep(200);
+  }
+  return leads;
 }
 
 export async function huntInstagram({ town, postcode, niche }) {

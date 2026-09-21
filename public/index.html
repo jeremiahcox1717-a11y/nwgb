@@ -40,8 +40,7 @@
           <h1>NWGB</h1>
         </div>
         <p class="promise">
-          Finds barbers, stylists, braiders and other shops with no website, no Google profile, or an Instagram and nothing to book.
-          One postcode at a time. Never the same code twice.
+          Pick a city. It searches Google Maps there for shops with no website, or a bad old outdated site, plus Instagram with nothing to book.
         </p>
         <nav>
           <button class="text is-active" data-panel="desk">Desk</button>
@@ -52,10 +51,10 @@
 
       <main id="panel-desk" class="desk">
         <section class="ticket">
-          <p class="stamp">Next unused</p>
+          <p class="stamp">City</p>
           <p class="meta" id="ticket-place">Pick continent, language, country, then city.</p>
           <p class="code" id="ticket-code">—</p>
-          <p class="remain" id="ticket-remain">Pick a city to see codes left</p>
+          <p class="remain" id="ticket-remain">Pick a city to hunt Google Maps</p>
           <div class="filters">
             <label>
               Continent
@@ -85,15 +84,14 @@
             </label>
           </div>
           <div class="row">
-            <button id="give" class="primary" disabled>Give me the next postcode</button>
-            <button id="hunt-ticket" class="ghost">Hunt this one</button>
+            <button id="hunt-ticket" class="primary" disabled>Hunt this city on Google Maps</button>
+            <button id="give" class="ghost" disabled>Next unused postcode</button>
           </div>
           <div class="row slim">
-            <button id="undo" class="text">Undo last given</button>
+            <button id="undo" class="text">Undo last given postcode</button>
           </div>
           <p class="hint">
-            Continent and language unlock countries. A country unlocks cities. A city unlocks unused postcodes.
-            Once a code is given, it is burnt. Undo only if you hit the button by accident.
+            Pick a city, then hunt. No postcode needed. Postcodes are optional if you still want to burn one area at a time.
           </p>
         </section>
 
@@ -101,8 +99,8 @@
           <p class="stamp">Hunt</p>
           <form id="hunt-form">
             <label>
-              Postcode
-              <input id="hunt-postcode" required placeholder="M1 or M1 1AE or 90210" autocomplete="off" />
+              City
+              <input id="hunt-city" required placeholder="Manchester or Austin TX" autocomplete="off" />
             </label>
             <label>
               Niche
@@ -120,13 +118,14 @@
             <fieldset>
               <legend>What to keep</legend>
               <label class="check"><input type="checkbox" name="mode" value="noWebsite" checked /> No website</label>
-              <label class="check"><input type="checkbox" name="mode" value="noGoogle" checked /> Not on Google</label>
-              <label class="check"><input type="checkbox" name="mode" value="onGoogleNoWebsite" checked /> On Google, no website</label>
+              <label class="check"><input type="checkbox" name="mode" value="onGoogleNoWebsite" checked /> On Google Maps, no website</label>
+              <label class="check"><input type="checkbox" name="mode" value="outdatedWebsite" checked /> Bad / old / outdated website</label>
+              <label class="check"><input type="checkbox" name="mode" value="noGoogle" /> Not on Google</label>
               <label class="check"><input type="checkbox" name="mode" value="instagram" checked /> Instagram only — no website, no booking</label>
             </fieldset>
-            <button type="submit" class="primary">Run hunt</button>
+            <button type="submit" class="primary">Run city hunt</button>
           </form>
-          <p id="hunt-status" class="status">Paste a postcode or take one from the ticket machine.</p>
+          <p id="hunt-status" class="status">Pick a city and hunt Google Maps for weak websites.</p>
           <p id="ig-links" class="hint hidden"></p>
           <div id="summary" class="summary hidden"></div>
           <div id="results" class="results"></div>

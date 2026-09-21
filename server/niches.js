@@ -162,3 +162,40 @@ export function googlePlaceTypesFor(niche) {
   if (niche === "home") return ["florist", "laundry", "moving_company"];
   return ALL_PLACE_TYPES.slice(0, 20);
 }
+
+export function googleTextQueriesFor(niche, place) {
+  const city = String(place || "").trim();
+  if (!city) return [];
+  if (niche === "beauty") {
+    return [
+      `barber in ${city}`,
+      `hair salon in ${city}`,
+      `braiding salon in ${city}`,
+      `beauty salon in ${city}`,
+      `nail salon in ${city}`,
+    ];
+  }
+  if (niche === "trades") {
+    return [
+      `plumber in ${city}`,
+      `electrician in ${city}`,
+      `locksmith in ${city}`,
+      `roofer in ${city}`,
+    ];
+  }
+  if (niche === "food") {
+    return [`restaurant in ${city}`, `cafe in ${city}`, `bakery in ${city}`];
+  }
+  if (niche === "auto") return [`car repair in ${city}`, `auto mechanic in ${city}`];
+  if (niche === "health") return [`dentist in ${city}`, `physiotherapist in ${city}`];
+  if (niche === "fitness") return [`gym in ${city}`, `personal trainer in ${city}`];
+  if (niche === "home") return [`florist in ${city}`, `laundry in ${city}`, `cleaner in ${city}`];
+  return [
+    `barber in ${city}`,
+    `hair salon in ${city}`,
+    `plumber in ${city}`,
+    `cafe in ${city}`,
+    `florist in ${city}`,
+    `gym in ${city}`,
+  ];
+}

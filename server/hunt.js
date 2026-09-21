@@ -1,4 +1,4 @@
-import { geocodePostcode } from "./geocode.js";
+import { geocodePlace, geocodePostcode } from "./geocode.js";
 import { markGiven } from "./postcodes.js";
 import { huntOsm } from "./hunt-osm.js";
 import {
@@ -6,8 +6,10 @@ import {
   fillMissingPhones,
   huntGooglePlaces,
   huntInstagram,
+  markOutdatedWebsites,
 } from "./hunt-google.js";
 import { scoreLead } from "./classify.js";
+import { assessWebsiteUrl } from "./website-quality.js";
 import { instagramSearchLinks } from "./niches.js";
 
 function emit(res, event, data) {
@@ -20,11 +22,15 @@ function keepLead(lead, modes) {
   const wantNoSite = modes.includes("noWebsite");
   const wantGhost = modes.includes("noGoogle");
   const wantBlank = modes.includes("onGoogleNoWebsite");
+  const wantOutdated = modes.includes("outdatedWebsite");
+  const outdated = lead.websiteQuality === "outdated";
 
   if (lead.source === "instagram") {
     return wantIg && !lead.hasWebsite && !lead.hasBooking;
   }
-  if (lead.hasWebsite) return false;
+  if (lead.hasWebsite) {
+    return wantOutdated && outdated;
+  }
   if (wantIg && lead.instagram && !lead.hasBooking) return true;
   if (wantGhost && lead.google === "none") return true;
   if (wantBlank && (lead.google === "blank" || lead.source === "google")) return true;
@@ -32,72 +38,124 @@ function keepLead(lead, modes) {
   return false;
 }
 
-export async function runHunt({ postcode, modes, niche, radius, onEvent }) {
-  const geo = await geocodePostcode(postcode);
+function defaultModes() {
+  return ["noWebsite", "onGoogleNoWebsite", "outdatedWebsite", "instagram"];
+}
+
+export async function runHunt({
+  place,
+  city,
+  postcode,
+  country,
+  language,
+  modes,
+  niche,
+  radius,
+  onEvent,
+}) {
+  const target = String(place || city || postcode || "").trim();
+  if (!target) {
+    onEvent("fail", { message: "Need a city to hunt." });
+    return { ok: false, error: "Need a city to hunt." };
+  }
+
+  const isPostcodeOnly = Boolean(postcode) && !place && !city;
+  const geo = isPostcodeOnly
+    ? await geocodePostcode(postcode)
+    : await geocodePlace(target, { country, language });
+
   if (!geo.ok) {
     onEvent("fail", { message: geo.error });
     return { ok: false, error: geo.error };
   }
 
-  markGiven(geo.postcode || postcode, {
-    hunt: true,
-    country: geo.country,
-    town: geo.town,
-    region: geo.region,
-    nation: geo.nation,
-    lat: geo.lat,
-    lon: geo.lon,
-  });
+  // Only burn postcodes when the hunt was aimed at a postcode ticket.
+  if (geo.kind === "postcode" && (geo.postcode || postcode)) {
+    markGiven(geo.postcode || postcode, {
+      hunt: true,
+      country: geo.country,
+      town: geo.town,
+      region: geo.region,
+      nation: geo.nation,
+      lat: geo.lat,
+      lon: geo.lon,
+    });
+  }
 
   onEvent("geo", geo);
-  const meters = Number(radius) || 1600;
-  const selected = modes?.length ? modes : ["noWebsite", "noGoogle", "onGoogleNoWebsite", "instagram"];
+  const cityMode = geo.kind === "city" || Boolean(place || city);
+  const meters = Number(radius) || (cityMode ? 12000 : 1600);
+  const selected = modes?.length ? modes : defaultModes();
   const all = [];
+  const label = geo.town || geo.display || target;
 
-  onEvent("status", { message: `Sweeping OpenStreetMap around ${geo.postcode || postcode}…` });
+  onEvent("status", {
+    message: `Searching Google Maps businesses in ${label}…`,
+  });
+  const places = await huntGooglePlaces({
+    lat: geo.lat,
+    lon: geo.lon,
+    radius: meters,
+    town: geo.town || label,
+    postcode: geo.postcode || "",
+    niche: niche || "beauty",
+    mode: cityMode ? "city" : "postcode",
+  });
+
+  if (places.skipped) {
+    onEvent("status", {
+      message:
+        "No Google API key — sweeping OpenStreetMap and checking the public web for Maps listings. Add GOOGLE_PLACES_API_KEY for a proper Google Maps city sweep.",
+    });
+  } else {
+    all.push(...places.leads);
+    onEvent("status", {
+      message: `Google Maps returned ${places.leads.length} businesses in ${label}.`,
+    });
+  }
+
+  onEvent("status", { message: `Sweeping OpenStreetMap around ${label}…` });
   try {
     const osm = await huntOsm({
       lat: geo.lat,
       lon: geo.lon,
       radius: meters,
-      town: geo.town,
-      postcode: geo.postcode || postcode,
+      town: geo.town || label,
+      postcode: geo.postcode || "",
       niche: niche || "all",
     });
     all.push(...osm);
     onEvent("status", { message: `Found ${osm.length} local businesses on OpenStreetMap.` });
   } catch (err) {
-    onEvent("status", { message: `OpenStreetMap sweep failed: ${err.message}. Still trying the other nets.` });
+    onEvent("status", {
+      message: `OpenStreetMap sweep failed: ${err.message}. Still trying the other nets.`,
+    });
   }
 
-  if (selected.includes("onGoogleNoWebsite") || selected.includes("noGoogle")) {
-    onEvent("status", { message: "Asking Google Places for listings with no website…" });
-    const places = await huntGooglePlaces({
-      lat: geo.lat,
-      lon: geo.lon,
-      radius: meters,
-      town: geo.town,
-      postcode: geo.postcode || postcode,
-      niche: niche || "all",
-    });
-    if (places.skipped) {
-      onEvent("status", {
-        message:
-          "No Google API key — I'll check the OpenStreetMap names against the public web instead. Add GOOGLE_PLACES_API_KEY for a proper Maps sweep.",
-      });
-      await enrichWithGoogleWeb(all, geo.town, (message) => onEvent("status", { message }));
-    } else {
-      all.push(...places.leads);
-      onEvent("status", { message: `Google Places returned ${places.leads.length} listings.` });
+  if (places.skipped && (selected.includes("onGoogleNoWebsite") || selected.includes("noGoogle"))) {
+    await enrichWithGoogleWeb(all, geo.town || label, (message) => onEvent("status", { message }));
+  }
+
+  if (selected.includes("outdatedWebsite")) {
+    for (const lead of all) {
+      if (!lead.hasWebsite || !lead.website) continue;
+      if (lead.websiteQuality) continue;
+      const quick = assessWebsiteUrl(lead.website);
+      lead.websiteQuality = quick.quality;
+      lead.websiteReasons = quick.reasons;
     }
+    onEvent("status", { message: "Checking websites that look old or broken…" });
+    await markOutdatedWebsites(all, (message) => onEvent("status", { message }));
   }
 
   if (selected.includes("instagram")) {
-    onEvent("status", { message: `Hunting Instagram shops in ${geo.town || postcode} with no site / no booking…` });
+    onEvent("status", {
+      message: `Hunting Instagram shops in ${geo.town || label} with no site / no booking…`,
+    });
     try {
       const ig = await huntInstagram({
-        town: geo.town,
-        postcode: geo.postcode || postcode,
+        town: geo.town || label,
+        postcode: geo.postcode || "",
         niche: niche || "beauty",
       });
       all.push(...ig.leads);
@@ -143,7 +201,7 @@ export async function runHunt({ postcode, modes, niche, radius, onEvent }) {
     onEvent("status", {
       message: `Checking public listings for phone numbers (${needingPhone} without one)…`,
     });
-    await fillMissingPhones(unique, geo.town, (message) => onEvent("status", { message }));
+    await fillMissingPhones(unique, geo.town || label, (message) => onEvent("status", { message }));
   }
   const withPhone = unique.filter((lead) => lead.phone).length;
   if (withPhone) {
@@ -169,13 +227,19 @@ export async function huntSse(req, res) {
     Connection: "keep-alive",
   });
   const url = new URL(req.url, "http://localhost");
+  const place = url.searchParams.get("place") || url.searchParams.get("city") || "";
   const postcode = url.searchParams.get("postcode") || "";
+  const country = url.searchParams.get("country") || "";
+  const language = url.searchParams.get("language") || "";
   const modes = (url.searchParams.get("modes") || "").split(",").filter(Boolean);
-  const niche = url.searchParams.get("niche") || "all";
-  const radius = url.searchParams.get("radius") || "1600";
+  const niche = url.searchParams.get("niche") || "beauty";
+  const radius = url.searchParams.get("radius") || "";
   try {
     await runHunt({
+      place,
       postcode,
+      country,
+      language,
       modes,
       niche,
       radius,
